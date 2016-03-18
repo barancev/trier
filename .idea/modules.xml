@@ -2,9 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/webdriver-expected-conditions/webdriver-expected-conditions.iml" filepath="$PROJECT_DIR$/webdriver-expected-conditions/webdriver-expected-conditions.iml" />
-      <module fileurl="file://$PROJECT_DIR$/webdriver-extensions.iml" filepath="$PROJECT_DIR$/webdriver-extensions.iml" />
-      <module fileurl="file://$PROJECT_DIR$/webdriver-repeatable-actions/webdriver-repeatable-actions.iml" filepath="$PROJECT_DIR$/webdriver-repeatable-actions/webdriver-repeatable-actions.iml" />
+      <module fileurl="file://$PROJECT_DIR$/webdriver-repeatable-actions.iml" filepath="$PROJECT_DIR$/webdriver-repeatable-actions.iml" />
     </modules>
   </component>
 </project>
