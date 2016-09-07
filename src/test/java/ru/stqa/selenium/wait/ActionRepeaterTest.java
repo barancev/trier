@@ -18,6 +18,11 @@ package ru.stqa.selenium.wait;
 
 import org.junit.Test;
 import org.openqa.selenium.*;
+import org.openqa.selenium.support.ui.Clock;
+import org.openqa.selenium.support.ui.Duration;
+import org.openqa.selenium.support.ui.Sleeper;
+
+import java.util.concurrent.TimeUnit;
 
 import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.CoreMatchers.is;
@@ -71,7 +76,7 @@ public class ActionRepeaterTest {
     TestingClock clock = new TestingClock();
 
     try {
-      with(mockedDriver, clock, clock, 1, 100)
+      new ActionRepeater<WebDriver>(mockedDriver, clock, clock, new Duration(1, TimeUnit.SECONDS), new Duration(100, TimeUnit.MILLISECONDS))
           .tryTo(findElement(By.name("foo")));
       fail("Exception expected");
     } catch (Throwable t) {

@@ -26,8 +26,6 @@ import org.openqa.selenium.support.ui.Duration;
 import org.openqa.selenium.support.ui.Sleeper;
 import org.openqa.selenium.support.ui.SystemClock;
 
-import java.util.concurrent.TimeUnit;
-
 import static com.google.common.base.Preconditions.checkNotNull;
 import static java.util.concurrent.TimeUnit.MILLISECONDS;
 import static java.util.concurrent.TimeUnit.SECONDS;
@@ -40,18 +38,9 @@ import static java.util.concurrent.TimeUnit.SECONDS;
  * Sample usage: <code>
  *   // Try to look for an element to be present on the page, checking<br>
  *   // for its presence once every 5 seconds until timeout of 30 seconds is expired.<br>
- *   ActionRepeater&lt;WebDriver&gt; repeater = new ActionRepeater&lt;WebDriver&gt;(driver)<br>
- *       .withTimeout(30, SECONDS)<br>
- *       .pollingEvery(5, SECONDS);<br>
- *<br>
- *   WebElement foo = repeater.tryTo(new AbstractRepeatableAction&lt;SearchContext, WebElement&gt;() {<br>
- *     public WebElement apply(SearchContext context) {<br>
- *       return driver.findElement(By.id("foo"));<br>
- *     }<br>
- *     public boolean shouldIgnoreException(Throwable t) {<br>
- *       return t instanceof NoSuchElementException;<br>
- *     }<br>
- *   });
+ *   ActionRepeater&lt;WebDriver&gt; repeater
+ *     = new ActionRepeater&lt;WebDriver&gt;(driver, 10\/*seconds*\/, 1000\/*milliseconds*\/);<br>
+ *   WebElement foo = repeater.tryTo(RepeatableActions.findElement(By.id("foo"));<br>
  * </code>
  *
  * <p>
@@ -73,10 +62,6 @@ public class ActionRepeater <T> {
     return new ActionRepeater<WebDriver>(driver, timeOutInSeconds, sleepInMillis);
   }
 
-  public static ActionRepeater<WebDriver> with(WebDriver driver, Clock clock, Sleeper sleeper, long timeOutInSeconds, long sleepInMillis) {
-    return new ActionRepeater<WebDriver>(driver, clock, sleeper, timeOutInSeconds, sleepInMillis);
-  }
-
   public static ActionRepeater<WebElement> with(WebElement element) {
     return new ActionRepeater<WebElement>(element);
   }
@@ -89,76 +74,49 @@ public class ActionRepeater <T> {
     return new ActionRepeater<WebElement>(element, timeOutInSeconds, sleepInMillis);
   }
 
-  public static ActionRepeater<WebElement> with(WebElement element, Clock clock, Sleeper sleeper, long timeOutInSeconds, long sleepInMillis) {
-    return new ActionRepeater<WebElement>(element, clock, sleeper, timeOutInSeconds, sleepInMillis);
-  }
-
-  public static Duration FIVE_HUNDRED_MILLIS = new Duration(500, MILLISECONDS);
-
   private final T context;
   private final Clock clock;
   private final Sleeper sleeper;
 
-  private Duration timeout = FIVE_HUNDRED_MILLIS;
-  private Duration interval = FIVE_HUNDRED_MILLIS;
+  private final Duration timeout;
+  private final Duration interval;
   private String message = null;
 
   public final static long DEFAULT_SLEEP_TIMEOUT = 500;
 
   public ActionRepeater(T context) {
-    this(context, DEFAULT_SLEEP_TIMEOUT);
+    this(context, new Duration(DEFAULT_SLEEP_TIMEOUT * 6, MILLISECONDS));
   }
 
   public ActionRepeater(T context, long timeOutInSeconds) {
-    this(context, timeOutInSeconds, DEFAULT_SLEEP_TIMEOUT);
+    this(context, new Duration(timeOutInSeconds, SECONDS));
+  }
+
+  public ActionRepeater(T context, Duration timeOut) {
+    this(context, timeOut, new Duration(DEFAULT_SLEEP_TIMEOUT, MILLISECONDS));
   }
 
   public ActionRepeater(T context, long timeOutInSeconds, long sleepInMillis) {
-    this(context, new SystemClock(), Sleeper.SYSTEM_SLEEPER, timeOutInSeconds, sleepInMillis);
+    this(context, new Duration(timeOutInSeconds, SECONDS), new Duration(sleepInMillis, MILLISECONDS));
+  }
+
+  public ActionRepeater(T context, Duration timeOut, Duration sleep) {
+    this(context, new SystemClock(), Sleeper.SYSTEM_SLEEPER, timeOut, sleep);
   }
 
   /**
    * @param context The execution context to pass to the action
    * @param clock The clock to use when measuring the timeout
    * @param sleeper Object used to make the current thread go to sleep.
-   * @param timeOutInSeconds The timeout in seconds when an expectation is
-   * @param sleepTimeOut The timeout used whilst sleeping. Defaults to {@link #FIVE_HUNDRED_MILLIS}.
+   * @param timeout Repetition timeout. An action should be repeated unless it succeeded ot the timeout passed.
+   * @param sleep The interval between two attempts to perform an action.
    */
-  protected ActionRepeater(T context, Clock clock, Sleeper sleeper, long timeOutInSeconds, long sleepTimeOut) {
+  protected ActionRepeater(T context, Clock clock, Sleeper sleeper, Duration timeout, Duration sleep) {
     this.context = checkNotNull(context);
     this.clock = checkNotNull(clock);
     this.sleeper = checkNotNull(sleeper);
-    withTimeout(timeOutInSeconds, TimeUnit.SECONDS);
-    pollingEvery(sleepTimeOut, TimeUnit.MILLISECONDS);
-  }
-
-  /**
-   * Sets how long to wait for the action to return a result that should not be ignored.
-   * The default timeout is {@link #FIVE_HUNDRED_MILLIS}.
-   *
-   * @param duration The timeout duration.
-   * @param unit The unit of time.
-   * @return A self reference.
-   */
-  public ActionRepeater<T> withTimeout(long duration, TimeUnit unit) {
-    this.timeout = new Duration(duration, unit);
-    return this;
-  }
-
-  /**
-   * Sets how often the action should be repeated.
-   *
-   * <p>
-   * In reality, the interval may be greater as the cost of actually evaluating the action
-   * is not factored in. The default polling interval is {@link #FIVE_HUNDRED_MILLIS}.
-   *
-   * @param duration The timeout duration.
-   * @param unit The unit of time.
-   * @return A self reference.
-   */
-  public ActionRepeater<T> pollingEvery(long duration, TimeUnit unit) {
-    this.interval = new Duration(duration, unit);
-    return this;
+    this.timeout = checkNotNull(timeout);
+    this.interval = checkNotNull(sleep);
   }
 
   /**
