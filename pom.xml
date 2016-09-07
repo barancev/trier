@@ -3,7 +3,7 @@
 
   <groupId>ru.stqa.selenium</groupId>
   <artifactId>webdriver-repeatable-actions</artifactId>
-  <version>2.1</version>
+  <version>2.2-SNAPSHOT</version>
   <packaging>jar</packaging>
 
   <name>webdriver-repeatable-actions</name>
@@ -32,7 +32,7 @@
     <connection>scm:git:git@github.com:barancev/webdriver-repeatable-actions.git</connection>
     <developerConnection>scm:git:git@github.com:barancev/webdriver-repeatable-actions.git</developerConnection>
     <url>https://github.com/barancev/webdriver-repeatable-actions</url>
-    <tag>webdriver-repeatable-actions-2.1</tag>
+    <tag>HEAD</tag>
   </scm>
 
   <dependencies>
