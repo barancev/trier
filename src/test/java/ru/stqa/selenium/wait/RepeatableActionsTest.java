@@ -28,6 +28,7 @@ import static org.junit.Assert.assertThat;
 import static org.mockito.Mockito.*;
 import static ru.stqa.selenium.wait.RepeatableActions.*;
 
+@SuppressWarnings({"unchecked"})
 public class RepeatableActionsTest {
 
   @Test

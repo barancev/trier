@@ -18,9 +18,7 @@ package ru.stqa.selenium.wait;
 
 import org.junit.Test;
 import org.openqa.selenium.*;
-import org.openqa.selenium.support.ui.Clock;
 import org.openqa.selenium.support.ui.Duration;
-import org.openqa.selenium.support.ui.Sleeper;
 
 import java.util.concurrent.TimeUnit;
 
@@ -32,6 +30,7 @@ import static org.mockito.Mockito.*;
 import static ru.stqa.selenium.wait.ActionRepeater.with;
 import static ru.stqa.selenium.wait.RepeatableActions.findElement;
 
+@SuppressWarnings({"unchecked"})
 public class ActionRepeaterTest {
 
   @Test

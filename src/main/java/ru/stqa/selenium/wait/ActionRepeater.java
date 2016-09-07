@@ -46,7 +46,7 @@ import static java.util.concurrent.TimeUnit.SECONDS;
  * <p>
  * <em>This class makes no thread safety guarantees.</em>
  *
- * @param <T> The action execution context type.
+ * @param <T> The action execution context type, usually {{@link WebDriver} or {{@link WebElement}}}.
  */
 public class ActionRepeater <T> {
 
@@ -80,9 +80,8 @@ public class ActionRepeater <T> {
 
   private final Duration timeout;
   private final Duration interval;
-  private String message = null;
 
-  public final static long DEFAULT_SLEEP_TIMEOUT = 500;
+  private final static long DEFAULT_SLEEP_TIMEOUT = 500;
 
   public ActionRepeater(T context) {
     this(context, new Duration(DEFAULT_SLEEP_TIMEOUT * 6, MILLISECONDS));
@@ -154,11 +153,9 @@ public class ActionRepeater <T> {
       // Check the timeout after evaluating the function to ensure conditions
       // with a zero timeout can succeed.
       if (!clock.isNowBefore(end)) {
-        String toAppend = message == null ?
-            " trying to perform action " + action.toString() : ": " + message;
-
-        String timeoutMessage = String.format("Timed out after %d seconds%s",
-            timeout.in(SECONDS), toAppend);
+        String timeoutMessage = String.format(
+          "Timed out after %d seconds trying to perform action %s",
+          timeout.in(SECONDS), action);
         throw new TimeoutException(timeoutMessage, lastException);
       }
 

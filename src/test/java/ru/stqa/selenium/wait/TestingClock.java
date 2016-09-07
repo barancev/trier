@@ -22,7 +22,7 @@ import org.openqa.selenium.support.ui.Sleeper;
 
 import java.util.concurrent.TimeUnit;
 
-public class TestingClock implements Clock, Sleeper {
+class TestingClock implements Clock, Sleeper {
 
   private long now = 0;
 
