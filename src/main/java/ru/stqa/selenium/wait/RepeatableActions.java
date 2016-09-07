@@ -20,7 +20,7 @@ import org.openqa.selenium.*;
 
 import java.util.List;
 
-public class RepeatableActions {
+public final class RepeatableActions {
 
   private RepeatableActions() {
     // Utility class
@@ -142,6 +142,7 @@ public class RepeatableActions {
   /**
    * @deprecated in favour of {{@link #clear()}}
    */
+  @Deprecated
   public static RepeatableAction<WebElement, Boolean> performClear() {
     return clear();
   }
@@ -189,6 +190,7 @@ public class RepeatableActions {
   /**
    * @deprecated in favour of {{@link #switchToAlert()}}
    */
+  @Deprecated
   public static RepeatableAction<WebDriver, Alert> performSwitchToAlert() {
     return switchToAlert();
   }
