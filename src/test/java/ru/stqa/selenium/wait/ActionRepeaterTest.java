@@ -25,7 +25,7 @@ import static org.junit.Assert.assertThat;
 import static org.junit.Assert.fail;
 import static org.mockito.Mockito.*;
 import static ru.stqa.selenium.wait.ActionRepeater.with;
-import static ru.stqa.selenium.wait.RepeatableActions.performFindElement;
+import static ru.stqa.selenium.wait.RepeatableActions.findElement;
 
 public class ActionRepeaterTest {
 
@@ -38,7 +38,7 @@ public class ActionRepeaterTest {
         .thenReturn(mockedElement);
 
     WebElement element = with(mockedDriver, 1, 1)
-        .tryTo(performFindElement(By.name("foo")));
+        .tryTo(findElement(By.name("foo")));
 
     verify(mockedDriver, times(1)).findElement(By.name("foo"));
     assertThat(element, is(mockedElement));
@@ -55,7 +55,7 @@ public class ActionRepeaterTest {
         .thenReturn(mockedElement);
 
     WebElement element = with(mockedDriver, 1, 1)
-        .tryTo(performFindElement(By.name("foo")));
+        .tryTo(findElement(By.name("foo")));
 
     verify(mockedDriver, times(3)).findElement(By.name("foo"));
     assertThat(element, is(mockedElement));
@@ -72,7 +72,7 @@ public class ActionRepeaterTest {
 
     try {
       with(mockedDriver, clock, clock, 1, 100)
-          .tryTo(performFindElement(By.name("foo")));
+          .tryTo(findElement(By.name("foo")));
       fail("Exception expected");
     } catch (Throwable t) {
       assertThat(t, instanceOf(TimeoutException.class));
@@ -92,7 +92,7 @@ public class ActionRepeaterTest {
 
     try {
       with(mockedDriver, 1, 1)
-          .tryTo(performFindElement(By.name("foo")));
+          .tryTo(findElement(By.name("foo")));
       fail("Exception expected");
     } catch (Throwable t) {
       assertThat(t, instanceOf(NoSuchWindowException.class));

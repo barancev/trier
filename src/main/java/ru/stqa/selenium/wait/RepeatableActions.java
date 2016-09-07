@@ -26,7 +26,15 @@ public class RepeatableActions {
     // Utility class
   }
 
+  /**
+   * @deprecated in favour of {{@link #findElement(By)}}
+   */
+  @Deprecated
   public static RepeatableAction<SearchContext, WebElement> performFindElement(final By locator) {
+    return findElement(locator);
+  }
+
+  public static RepeatableAction<SearchContext, WebElement> findElement(final By locator) {
     return new AbstractRepeatableAction<SearchContext, WebElement>() {
       @Override
       public WebElement apply(SearchContext context) {
@@ -39,7 +47,15 @@ public class RepeatableActions {
     };
   }
 
+  /**
+   * @deprecated in favour of {{@link #findElements(By)}}
+   */
+  @Deprecated
   public static RepeatableAction<SearchContext, List<WebElement>> performFindElements(final By locator) {
+    return findElements(locator);
+  }
+
+  public static RepeatableAction<SearchContext, List<WebElement>> findElements(final By locator) {
     return new AbstractRepeatableAction<SearchContext, List<WebElement>>() {
       @Override
       public List<WebElement> apply(SearchContext context) {
@@ -57,7 +73,15 @@ public class RepeatableActions {
     };
   }
 
+  /**
+   * @deprecated in favour of {{@link #click()}}
+   */
+  @Deprecated
   public static RepeatableAction<WebElement, Boolean> performClick() {
+    return click();
+  }
+
+  public static RepeatableAction<WebElement, Boolean> click() {
     return new AbstractRepeatableAction<WebElement, Boolean>() {
       @Override
       public Boolean apply(WebElement element) {
@@ -71,7 +95,15 @@ public class RepeatableActions {
     };
   }
 
+  /**
+   * @deprecated in favour of {{@link #submit()}}
+   */
+  @Deprecated
   public static RepeatableAction<WebElement, Boolean> performSubmit() {
+    return submit();
+  }
+
+  public static RepeatableAction<WebElement, Boolean> submit() {
     return new AbstractRepeatableAction<WebElement, Boolean>() {
       @Override
       public Boolean apply(WebElement element) {
@@ -85,7 +117,15 @@ public class RepeatableActions {
     };
   }
 
+  /**
+   * @deprecated in favour of {{@link #sendKeys(CharSequence...)}}
+   */
+  @Deprecated
   public static RepeatableAction<WebElement, Boolean> performSendKeys(final CharSequence... keysToSend) {
+    return sendKeys(keysToSend);
+  }
+
+  public static RepeatableAction<WebElement, Boolean> sendKeys(final CharSequence... keysToSend) {
     return new AbstractRepeatableAction<WebElement, Boolean>() {
       @Override
       public Boolean apply(WebElement element) {
@@ -99,7 +139,14 @@ public class RepeatableActions {
     };
   }
 
+  /**
+   * @deprecated in favour of {{@link #clear()}}
+   */
   public static RepeatableAction<WebElement, Boolean> performClear() {
+    return clear();
+  }
+
+  public static RepeatableAction<WebElement, Boolean> clear() {
     return new AbstractRepeatableAction<WebElement, Boolean>() {
       @Override
       public Boolean apply(WebElement element) {
@@ -139,7 +186,14 @@ public class RepeatableActions {
     };
   }
 
+  /**
+   * @deprecated in favour of {{@link #switchToAlert()}}
+   */
   public static RepeatableAction<WebDriver, Alert> performSwitchToAlert() {
+    return switchToAlert();
+  }
+
+  public static RepeatableAction<WebDriver, Alert> switchToAlert() {
     return new AbstractRepeatableAction<WebDriver, Alert>() {
       @Override
       public Alert apply(WebDriver driver) {
