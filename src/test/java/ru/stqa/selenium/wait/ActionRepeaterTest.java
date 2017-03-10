@@ -75,7 +75,7 @@ public class ActionRepeaterTest {
     TestingClock clock = new TestingClock();
 
     try {
-      new ActionRepeater<WebDriver>(mockedDriver, clock, clock, new Duration(1, TimeUnit.SECONDS), new Duration(100, TimeUnit.MILLISECONDS))
+      new ActionRepeater<>(mockedDriver, clock, clock, new Duration(1, TimeUnit.SECONDS), new Duration(100, TimeUnit.MILLISECONDS))
           .tryTo(findElement(By.name("foo")));
       fail("Exception expected");
     } catch (Throwable t) {

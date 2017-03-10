@@ -51,27 +51,27 @@ import static java.util.concurrent.TimeUnit.SECONDS;
 public class ActionRepeater <T> {
 
   public static ActionRepeater<WebDriver> with(WebDriver driver) {
-    return new ActionRepeater<WebDriver>(driver);
+    return new ActionRepeater<>(driver);
   }
 
   public static ActionRepeater<WebDriver> with(WebDriver driver, long timeOutInSeconds) {
-    return new ActionRepeater<WebDriver>(driver, timeOutInSeconds);
+    return new ActionRepeater<>(driver, timeOutInSeconds);
   }
 
   public static ActionRepeater<WebDriver> with(WebDriver driver, long timeOutInSeconds, long sleepInMillis) {
-    return new ActionRepeater<WebDriver>(driver, timeOutInSeconds, sleepInMillis);
+    return new ActionRepeater<>(driver, timeOutInSeconds, sleepInMillis);
   }
 
   public static ActionRepeater<WebElement> with(WebElement element) {
-    return new ActionRepeater<WebElement>(element);
+    return new ActionRepeater<>(element);
   }
 
   public static ActionRepeater<WebElement> with(WebElement element, long timeOutInSeconds) {
-    return new ActionRepeater<WebElement>(element, timeOutInSeconds);
+    return new ActionRepeater<>(element, timeOutInSeconds);
   }
 
   public static ActionRepeater<WebElement> with(WebElement element, long timeOutInSeconds, long sleepInMillis) {
-    return new ActionRepeater<WebElement>(element, timeOutInSeconds, sleepInMillis);
+    return new ActionRepeater<>(element, timeOutInSeconds, sleepInMillis);
   }
 
   private final T context;

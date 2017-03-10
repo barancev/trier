@@ -39,7 +39,7 @@ public class RepeatableActionsTest {
     when(mockedDriver.findElement(By.name("foo")))
         .thenReturn(mockedElement);
 
-    WebElement element = new ActionRepeater<WebDriver>(mockedDriver, 1, 1)
+    WebElement element = new ActionRepeater<>(mockedDriver, 1, 1)
         .tryTo(findElement(By.name("foo")));
 
     verify(mockedDriver, times(1)).findElement(By.name("foo"));
@@ -56,7 +56,7 @@ public class RepeatableActionsTest {
         .thenThrow(NoSuchElementException.class)
         .thenReturn(mockedElement);
 
-    WebElement element = new ActionRepeater<WebDriver>(mockedDriver, 1, 1)
+    WebElement element = new ActionRepeater<>(mockedDriver, 1, 1)
         .tryTo(findElement(By.name("foo")));
 
     verify(mockedDriver, times(3)).findElement(By.name("foo"));
@@ -73,7 +73,7 @@ public class RepeatableActionsTest {
     when(mockedDriver.findElements(By.name("foo")))
         .thenReturn(mockedElements);
 
-    List<WebElement> elements = new ActionRepeater<WebDriver>(mockedDriver, 1, 1)
+    List<WebElement> elements = new ActionRepeater<>(mockedDriver, 1, 1)
         .tryTo(findElements(By.name("foo")));
 
     verify(mockedDriver, times(1)).findElements(By.name("foo"));
@@ -88,11 +88,11 @@ public class RepeatableActionsTest {
     final List<WebElement> mockedElements = Lists.newArrayList(mockedElement1, mockedElement2);
 
     when(mockedDriver.findElements(By.name("foo")))
-        .thenReturn(new ArrayList<WebElement>())
-        .thenReturn(new ArrayList<WebElement>())
+        .thenReturn(new ArrayList<>())
+        .thenReturn(new ArrayList<>())
         .thenReturn(mockedElements);
 
-    List<WebElement> elements = new ActionRepeater<WebDriver>(mockedDriver, 1, 1)
+    List<WebElement> elements = new ActionRepeater<>(mockedDriver, 1, 1)
         .tryTo(findElements(By.name("foo")));
 
     verify(mockedDriver, times(3)).findElements(By.name("foo"));
@@ -111,7 +111,7 @@ public class RepeatableActionsTest {
         .thenThrow(NoSuchElementException.class)
         .thenReturn(mockedElements);
 
-    List<WebElement> elements = new ActionRepeater<WebDriver>(mockedDriver, 1, 1)
+    List<WebElement> elements = new ActionRepeater<>(mockedDriver, 1, 1)
         .tryTo(findElements(By.name("foo")));
 
     verify(mockedDriver, times(3)).findElements(By.name("foo"));
@@ -126,7 +126,7 @@ public class RepeatableActionsTest {
     when(mockedElement1.findElement(By.name("foo")))
         .thenReturn(mockedElement2);
 
-    WebElement element = new ActionRepeater<WebElement>(mockedElement1, 1, 1)
+    WebElement element = new ActionRepeater<>(mockedElement1, 1, 1)
         .tryTo(findElement(By.name("foo")));
 
     verify(mockedElement1, times(1)).findElement(By.name("foo"));
@@ -143,7 +143,7 @@ public class RepeatableActionsTest {
         .thenThrow(NoSuchElementException.class)
         .thenReturn(mockedElement2);
 
-    WebElement element = new ActionRepeater<WebElement>(mockedElement1, 1, 1)
+    WebElement element = new ActionRepeater<>(mockedElement1, 1, 1)
         .tryTo(findElement(By.name("foo")));
 
     verify(mockedElement1, times(3)).findElement(By.name("foo"));
@@ -160,7 +160,7 @@ public class RepeatableActionsTest {
     when(mockedElement.findElements(By.name("foo")))
         .thenReturn(mockedElements);
 
-    List<WebElement> elements = new ActionRepeater<WebElement>(mockedElement, 1, 1)
+    List<WebElement> elements = new ActionRepeater<>(mockedElement, 1, 1)
         .tryTo(findElements(By.name("foo")));
 
     verify(mockedElement, times(1)).findElements(By.name("foo"));
@@ -175,11 +175,11 @@ public class RepeatableActionsTest {
     final List<WebElement> mockedElements = Lists.newArrayList(mockedElement1, mockedElement2);
 
     when(mockedElement.findElements(By.name("foo")))
-        .thenReturn(new ArrayList<WebElement>())
-        .thenReturn(new ArrayList<WebElement>())
+        .thenReturn(new ArrayList<>())
+        .thenReturn(new ArrayList<>())
         .thenReturn(mockedElements);
 
-    List<WebElement> elements = new ActionRepeater<WebElement>(mockedElement, 1, 1)
+    List<WebElement> elements = new ActionRepeater<>(mockedElement, 1, 1)
         .tryTo(findElements(By.name("foo")));
 
     verify(mockedElement, times(3)).findElements(By.name("foo"));
@@ -198,7 +198,7 @@ public class RepeatableActionsTest {
         .thenThrow(NoSuchElementException.class)
         .thenReturn(mockedElements);
 
-    List<WebElement> elements = new ActionRepeater<WebElement>(mockedElement, 1, 1)
+    List<WebElement> elements = new ActionRepeater<>(mockedElement, 1, 1)
         .tryTo(findElements(By.name("foo")));
 
     verify(mockedElement, times(3)).findElements(By.name("foo"));
@@ -211,7 +211,7 @@ public class RepeatableActionsTest {
 
     doNothing().when(mockedElement).click();
 
-    new ActionRepeater<WebElement>(mockedElement, 1, 1)
+    new ActionRepeater<>(mockedElement, 1, 1)
         .tryTo(click());
 
     verify(mockedElement, times(1)).click();
@@ -226,7 +226,7 @@ public class RepeatableActionsTest {
         .doNothing()
         .when(mockedElement).click();
 
-    new ActionRepeater<WebElement>(mockedElement, 1, 1)
+    new ActionRepeater<>(mockedElement, 1, 1)
         .tryTo(click());
 
     verify(mockedElement, times(3)).click();
@@ -238,7 +238,7 @@ public class RepeatableActionsTest {
 
     doNothing().when(mockedElement).submit();
 
-    new ActionRepeater<WebElement>(mockedElement, 1, 1)
+    new ActionRepeater<>(mockedElement, 1, 1)
         .tryTo(submit());
 
     verify(mockedElement, times(1)).submit();
@@ -253,7 +253,7 @@ public class RepeatableActionsTest {
         .doNothing()
         .when(mockedElement).submit();
 
-    new ActionRepeater<WebElement>(mockedElement, 1, 1)
+    new ActionRepeater<>(mockedElement, 1, 1)
         .tryTo(submit());
 
     verify(mockedElement, times(3)).submit();
@@ -266,7 +266,7 @@ public class RepeatableActionsTest {
 
     doNothing().when(mockedElement).sendKeys(text);
 
-    new ActionRepeater<WebElement>(mockedElement, 1, 1)
+    new ActionRepeater<>(mockedElement, 1, 1)
         .tryTo(sendKeys(text));
 
     verify(mockedElement, times(1)).sendKeys(text);
@@ -282,7 +282,7 @@ public class RepeatableActionsTest {
         .doNothing()
         .when(mockedElement).sendKeys(text);
 
-    new ActionRepeater<WebElement>(mockedElement, 1, 1)
+    new ActionRepeater<>(mockedElement, 1, 1)
         .tryTo(sendKeys(text));
 
     verify(mockedElement, times(3)).sendKeys(text);
@@ -294,7 +294,7 @@ public class RepeatableActionsTest {
 
     doNothing().when(mockedElement).clear();
 
-    new ActionRepeater<WebElement>(mockedElement, 1, 1)
+    new ActionRepeater<>(mockedElement, 1, 1)
         .tryTo(clear());
 
     verify(mockedElement, times(1)).clear();
@@ -309,7 +309,7 @@ public class RepeatableActionsTest {
         .doNothing()
         .when(mockedElement).clear();
 
-    new ActionRepeater<WebElement>(mockedElement, 1, 1)
+    new ActionRepeater<>(mockedElement, 1, 1)
         .tryTo(clear());
 
     verify(mockedElement, times(3)).clear();
@@ -321,7 +321,7 @@ public class RepeatableActionsTest {
 
     when(mockedElement.isSelected()).thenReturn(true);
 
-    boolean res = new ActionRepeater<WebElement>(mockedElement, 1, 1)
+    boolean res = new ActionRepeater<>(mockedElement, 1, 1)
         .tryTo(checkIsSelected());
 
     assertThat(res, is(true));
@@ -334,7 +334,7 @@ public class RepeatableActionsTest {
 
     when(mockedElement.isSelected()).thenReturn(false);
 
-    boolean res = new ActionRepeater<WebElement>(mockedElement, 1, 1)
+    boolean res = new ActionRepeater<>(mockedElement, 1, 1)
         .tryTo(checkIsSelected());
 
     assertThat(res, is(false));
@@ -350,7 +350,7 @@ public class RepeatableActionsTest {
         .thenThrow(ElementNotVisibleException.class)
         .thenReturn(true);
 
-    new ActionRepeater<WebElement>(mockedElement, 1, 1)
+    new ActionRepeater<>(mockedElement, 1, 1)
         .tryTo(checkIsSelected());
 
     verify(mockedElement, times(3)).isSelected();
@@ -362,7 +362,7 @@ public class RepeatableActionsTest {
 
     when(mockedElement.isEnabled()).thenReturn(true);
 
-    boolean res = new ActionRepeater<WebElement>(mockedElement, 1, 1)
+    boolean res = new ActionRepeater<>(mockedElement, 1, 1)
         .tryTo(checkIsEnabled());
 
     assertThat(res, is(true));
@@ -375,7 +375,7 @@ public class RepeatableActionsTest {
 
     when(mockedElement.isEnabled()).thenReturn(false);
 
-    boolean res = new ActionRepeater<WebElement>(mockedElement, 1, 1)
+    boolean res = new ActionRepeater<>(mockedElement, 1, 1)
         .tryTo(checkIsEnabled());
 
     assertThat(res, is(false));
@@ -391,7 +391,7 @@ public class RepeatableActionsTest {
         .thenThrow(ElementNotVisibleException.class)
         .thenReturn(true);
 
-    new ActionRepeater<WebElement>(mockedElement, 1, 1)
+    new ActionRepeater<>(mockedElement, 1, 1)
         .tryTo(checkIsEnabled());
 
     verify(mockedElement, times(3)).isEnabled();
@@ -406,7 +406,7 @@ public class RepeatableActionsTest {
     when(mockedDriver.switchTo()).thenReturn(mockedSwitch);
     when(mockedSwitch.alert()).thenReturn(mockedAlert);
 
-    Alert alert = new ActionRepeater<WebDriver>(mockedDriver, 1, 1)
+    Alert alert = new ActionRepeater<>(mockedDriver, 1, 1)
         .tryTo(switchToAlert());
 
     verify(mockedDriver, times(1)).switchTo();
@@ -426,7 +426,7 @@ public class RepeatableActionsTest {
         .thenThrow(NoAlertPresentException.class)
         .thenReturn(mockedAlert);
 
-    Alert alert = new ActionRepeater<WebDriver>(mockedDriver, 1, 1)
+    Alert alert = new ActionRepeater<>(mockedDriver, 1, 1)
         .tryTo(switchToAlert());
 
     verify(mockedDriver, times(3)).switchTo();
