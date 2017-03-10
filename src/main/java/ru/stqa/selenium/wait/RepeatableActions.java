@@ -26,14 +26,6 @@ public final class RepeatableActions {
     // Utility class
   }
 
-  /**
-   * @deprecated in favour of {{@link #findElement(By)}}
-   */
-  @Deprecated
-  public static RepeatableAction<SearchContext, WebElement> performFindElement(final By locator) {
-    return findElement(locator);
-  }
-
   public static RepeatableAction<SearchContext, WebElement> findElement(final By locator) {
     return new RepeatableAction<SearchContext, WebElement>() {
       @Override
@@ -45,14 +37,6 @@ public final class RepeatableActions {
         return t instanceof NoSuchElementException;
       }
     };
-  }
-
-  /**
-   * @deprecated in favour of {{@link #findElements(By)}}
-   */
-  @Deprecated
-  public static RepeatableAction<SearchContext, List<WebElement>> performFindElements(final By locator) {
-    return findElements(locator);
   }
 
   public static RepeatableAction<SearchContext, List<WebElement>> findElements(final By locator) {
@@ -73,14 +57,6 @@ public final class RepeatableActions {
     };
   }
 
-  /**
-   * @deprecated in favour of {{@link #click()}}
-   */
-  @Deprecated
-  public static RepeatableAction<WebElement, Boolean> performClick() {
-    return click();
-  }
-
   public static RepeatableAction<WebElement, Boolean> click() {
     return new RepeatableAction<WebElement, Boolean>() {
       @Override
@@ -93,14 +69,6 @@ public final class RepeatableActions {
         return t instanceof ElementNotVisibleException;
       }
     };
-  }
-
-  /**
-   * @deprecated in favour of {{@link #submit()}}
-   */
-  @Deprecated
-  public static RepeatableAction<WebElement, Boolean> performSubmit() {
-    return submit();
   }
 
   public static RepeatableAction<WebElement, Boolean> submit() {
@@ -117,14 +85,6 @@ public final class RepeatableActions {
     };
   }
 
-  /**
-   * @deprecated in favour of {{@link #sendKeys(CharSequence...)}}
-   */
-  @Deprecated
-  public static RepeatableAction<WebElement, Boolean> performSendKeys(final CharSequence... keysToSend) {
-    return sendKeys(keysToSend);
-  }
-
   public static RepeatableAction<WebElement, Boolean> sendKeys(final CharSequence... keysToSend) {
     return new RepeatableAction<WebElement, Boolean>() {
       @Override
@@ -137,14 +97,6 @@ public final class RepeatableActions {
         return t instanceof ElementNotVisibleException;
       }
     };
-  }
-
-  /**
-   * @deprecated in favour of {{@link #clear()}}
-   */
-  @Deprecated
-  public static RepeatableAction<WebElement, Boolean> performClear() {
-    return clear();
   }
 
   public static RepeatableAction<WebElement, Boolean> clear() {
@@ -185,14 +137,6 @@ public final class RepeatableActions {
         return t instanceof ElementNotVisibleException;
       }
     };
-  }
-
-  /**
-   * @deprecated in favour of {{@link #switchToAlert()}}
-   */
-  @Deprecated
-  public static RepeatableAction<WebDriver, Alert> performSwitchToAlert() {
-    return switchToAlert();
   }
 
   public static RepeatableAction<WebDriver, Alert> switchToAlert() {
