@@ -35,7 +35,7 @@ public final class RepeatableActions {
   }
 
   public static RepeatableAction<SearchContext, WebElement> findElement(final By locator) {
-    return new AbstractRepeatableAction<SearchContext, WebElement>() {
+    return new RepeatableAction<SearchContext, WebElement>() {
       @Override
       public WebElement apply(SearchContext context) {
         return context.findElement(locator);
@@ -56,7 +56,7 @@ public final class RepeatableActions {
   }
 
   public static RepeatableAction<SearchContext, List<WebElement>> findElements(final By locator) {
-    return new AbstractRepeatableAction<SearchContext, List<WebElement>>() {
+    return new RepeatableAction<SearchContext, List<WebElement>>() {
       @Override
       public List<WebElement> apply(SearchContext context) {
         return context.findElements(locator);
@@ -82,7 +82,7 @@ public final class RepeatableActions {
   }
 
   public static RepeatableAction<WebElement, Boolean> click() {
-    return new AbstractRepeatableAction<WebElement, Boolean>() {
+    return new RepeatableAction<WebElement, Boolean>() {
       @Override
       public Boolean apply(WebElement element) {
         element.click();
@@ -104,7 +104,7 @@ public final class RepeatableActions {
   }
 
   public static RepeatableAction<WebElement, Boolean> submit() {
-    return new AbstractRepeatableAction<WebElement, Boolean>() {
+    return new RepeatableAction<WebElement, Boolean>() {
       @Override
       public Boolean apply(WebElement element) {
         element.submit();
@@ -126,7 +126,7 @@ public final class RepeatableActions {
   }
 
   public static RepeatableAction<WebElement, Boolean> sendKeys(final CharSequence... keysToSend) {
-    return new AbstractRepeatableAction<WebElement, Boolean>() {
+    return new RepeatableAction<WebElement, Boolean>() {
       @Override
       public Boolean apply(WebElement element) {
         element.sendKeys(keysToSend);
@@ -148,7 +148,7 @@ public final class RepeatableActions {
   }
 
   public static RepeatableAction<WebElement, Boolean> clear() {
-    return new AbstractRepeatableAction<WebElement, Boolean>() {
+    return new RepeatableAction<WebElement, Boolean>() {
       @Override
       public Boolean apply(WebElement element) {
         element.clear();
@@ -162,7 +162,7 @@ public final class RepeatableActions {
   }
 
   public static RepeatableAction<WebElement, Boolean> checkIsSelected() {
-    return new AbstractRepeatableAction<WebElement, Boolean>() {
+    return new RepeatableAction<WebElement, Boolean>() {
       @Override
       public Boolean apply(WebElement element) {
         return element.isSelected();
@@ -175,7 +175,7 @@ public final class RepeatableActions {
   }
 
   public static RepeatableAction<WebElement, Boolean> checkIsEnabled() {
-    return new AbstractRepeatableAction<WebElement, Boolean>() {
+    return new RepeatableAction<WebElement, Boolean>() {
       @Override
       public Boolean apply(WebElement element) {
         return element.isEnabled();
@@ -196,7 +196,7 @@ public final class RepeatableActions {
   }
 
   public static RepeatableAction<WebDriver, Alert> switchToAlert() {
-    return new AbstractRepeatableAction<WebDriver, Alert>() {
+    return new RepeatableAction<WebDriver, Alert>() {
       @Override
       public Alert apply(WebDriver driver) {
         return driver.switchTo().alert();

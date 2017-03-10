@@ -20,7 +20,8 @@ import com.google.common.base.Function;
 
 public interface RepeatableAction <T, V> extends Function<T, V> {
 
-  boolean shouldIgnoreException(Throwable t);
-  boolean shouldIgnoreResult(V result);
+  default boolean shouldIgnoreException(Throwable t) { return false; }
+
+  default boolean shouldIgnoreResult(V result) { return false; }
 
 }
