@@ -14,13 +14,7 @@
  *  limitations under the License.
  *
  */
-package ru.stqa.selenium.wait;
-
-import org.openqa.selenium.support.ui.Clock;
-import org.openqa.selenium.support.ui.Duration;
-import org.openqa.selenium.support.ui.Sleeper;
-
-import java.util.concurrent.TimeUnit;
+package ru.stqa.repeater;
 
 class TestingClock implements Clock, Sleeper {
 
@@ -42,7 +36,7 @@ class TestingClock implements Clock, Sleeper {
   }
 
   @Override
-  public void sleep(Duration duration) {
-    now += duration.in(TimeUnit.MILLISECONDS);
+  public void sleep(long duration) {
+    now += duration;
   }
 }

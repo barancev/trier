@@ -1,5 +1,5 @@
 /*
- * Copyright 2013 Alexei Barantsev
+ * Copyright 2017 Alexei Barantsev
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -14,14 +14,19 @@
  *  limitations under the License.
  *
  */
-package ru.stqa.selenium.wait;
+package ru.stqa.repeater;
 
-import com.google.common.base.Function;
-
-public interface RepeatableAction <T, V> extends Function<T, V> {
-
-  default boolean shouldIgnoreException(Throwable t) { return false; }
-
-  default boolean shouldIgnoreResult(V result) { return false; }
-
+public class LimitExceededException extends RuntimeException {
+  public LimitExceededException() {
+    super();
+  }
+  public LimitExceededException(String msg) {
+    super(msg);
+  }
+  public LimitExceededException(Throwable e) {
+    super(e);
+  }
+  public LimitExceededException(String msg, Throwable e) {
+    super(msg, e);
+  }
 }

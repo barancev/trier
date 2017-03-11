@@ -1,0 +1,13 @@
+<component name="libraryTable">
+  <library name="Maven: eu.codearte.catch-exception:catch-throwable:2.0.0-ALPHA-1">
+    <CLASSES>
+      <root url="jar://$MAVEN_REPOSITORY$/eu/codearte/catch-exception/catch-throwable/2.0.0-ALPHA-1/catch-throwable-2.0.0-ALPHA-1.jar!/" />
+    </CLASSES>
+    <JAVADOC>
+      <root url="jar://$MAVEN_REPOSITORY$/eu/codearte/catch-exception/catch-throwable/2.0.0-ALPHA-1/catch-throwable-2.0.0-ALPHA-1-javadoc.jar!/" />
+    </JAVADOC>
+    <SOURCES>
+      <root url="jar://$MAVEN_REPOSITORY$/eu/codearte/catch-exception/catch-throwable/2.0.0-ALPHA-1/catch-throwable-2.0.0-ALPHA-1-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>
