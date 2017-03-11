@@ -6,10 +6,12 @@
         <sourceOutputDir name="target/generated-sources/annotations" />
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
+        <module name="trier" />
         <module name="webdriver-repeatable-actions" />
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
+      <module name="trier" target="1.8" />
       <module name="webdriver-repeatable-actions" target="1.8" />
     </bytecodeTargetLevel>
   </component>

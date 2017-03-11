@@ -16,80 +16,87 @@
  */
 package ru.stqa.repeater;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Nested;
+import org.junit.jupiter.api.Test;
 
-import static com.googlecode.catchexception.throwable.CatchThrowable.catchThrowable;
-import static com.googlecode.catchexception.throwable.CatchThrowable.caughtThrowable;
-import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.CoreMatchers.is;
-import static org.junit.Assert.assertThat;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.*;
 
-public class CounterBasedTrierTest {
+@DisplayName("CounterBasedTrier")
+class CounterBasedTrierTest {
 
-  private TestingClock clock;
-  private Trier trier;
+  TestingClock clock;
+  Trier trier;
 
-  @Before
-  public void init() {
+  @BeforeEach
+  void init() {
     clock = new TestingClock();
     trier = new CounterBasedTrier(5, clock, 1L);
   }
 
-  @Test
-  public void shouldReturnImmediatelyIfTheRunnableDoesNotThrow() throws InterruptedException {
-    Runnable run = mock(Runnable.class);
-    trier.tryTo(run);
-    verify(run, times(1)).run();
-    assertThat(clock.now(), is(0L));
+  @Nested
+  @DisplayName("tries to run Runnable")
+  class TryToRunRunnable {
+
+    @Test
+    void shouldReturnImmediatelyIfTheRunnableDoesNotThrow() throws InterruptedException {
+      Runnable run = mock(Runnable.class);
+      trier.tryTo(run);
+      verify(run, times(1)).run();
+      assertThat(clock.now(), is(0L));
+    }
+
+    @Test
+    void shouldIgnoreIgnoredExceptionThrownOnce() throws InterruptedException {
+      Runnable run = mock(Runnable.class);
+      doThrow(NumberFormatException.class).doNothing().when(run).run();
+      trier.ignoring(NumberFormatException.class).tryTo(run);
+      verify(run, times(2)).run();
+      assertThat(clock.now(), is(1L));
+    }
+
+    @Test
+    void shouldIgnoreIgnoredExceptionThrownSeveralTimes() throws InterruptedException {
+      Runnable run = mock(Runnable.class);
+      doThrow(NumberFormatException.class).doThrow(NumberFormatException.class).doNothing().when(run).run();
+      trier.ignoring(NumberFormatException.class).tryTo(run);
+      verify(run, times(3)).run();
+      assertThat(clock.now(), is(2L));
+    }
+
+    @Test
+    void shouldIgnoreVariousIgnoredException() throws InterruptedException {
+      Runnable run = mock(Runnable.class);
+      doThrow(NumberFormatException.class).doThrow(ArrayIndexOutOfBoundsException.class).doNothing().when(run).run();
+      trier.ignoring(NumberFormatException.class, ArrayIndexOutOfBoundsException.class).tryTo(run);
+      verify(run, times(3)).run();
+      assertThat(clock.now(), is(2L));
+    }
+
+    @Test
+    void shouldNotIgnoreIgnoredExceptionThrownAlways() {
+      Runnable run = mock(Runnable.class);
+      doThrow(NumberFormatException.class).when(run).run();
+      assertThrows(LimitExceededException.class,
+        () -> trier.ignoring(NumberFormatException.class).tryTo(run));
+      verify(run, times(5)).run();
+      assertThat(clock.now(), is(4L));
+    }
+
+    @Test
+    void shouldNotIgnoreNotIgnoredException() throws InterruptedException {
+      Runnable run = mock(Runnable.class);
+      doThrow(NumberFormatException.class).doThrow(ArrayIndexOutOfBoundsException.class).doNothing().when(run).run();
+      assertThrows(ArrayIndexOutOfBoundsException.class,
+        () -> trier.ignoring(NumberFormatException.class).tryTo(run));
+      verify(run, times(2)).run();
+      assertThat(clock.now(), is(1L));
+    }
   }
 
-  @Test
-  public void shouldIgnoreIgnoredExceptionThrownOnce() throws InterruptedException {
-    Runnable run = mock(Runnable.class);
-    doThrow(NumberFormatException.class).doNothing().when(run).run();
-    trier.ignoring(NumberFormatException.class).tryTo(run);
-    verify(run, times(2)).run();
-    assertThat(clock.now(), is(1L));
-  }
-
-  @Test
-  public void shouldIgnoreIgnoredExceptionThrownSeveralTimes() throws InterruptedException {
-    Runnable run = mock(Runnable.class);
-    doThrow(NumberFormatException.class).doThrow(NumberFormatException.class).doNothing().when(run).run();
-    trier.ignoring(NumberFormatException.class).tryTo(run);
-    verify(run, times(3)).run();
-    assertThat(clock.now(), is(2L));
-  }
-
-  @Test
-  public void shouldIgnoreVariousIgnoredException() throws InterruptedException {
-    Runnable run = mock(Runnable.class);
-    doThrow(NumberFormatException.class).doThrow(ArrayIndexOutOfBoundsException.class).doNothing().when(run).run();
-    trier.ignoring(NumberFormatException.class, ArrayIndexOutOfBoundsException.class).tryTo(run);
-    verify(run, times(3)).run();
-    assertThat(clock.now(), is(2L));
-  }
-
-  @Test
-  public void shouldNotIgnoreIgnoredExceptionThrownAlways() {
-    Runnable run = mock(Runnable.class);
-    doThrow(NumberFormatException.class).when(run).run();
-    catchThrowable(() -> trier.ignoring(NumberFormatException.class).tryTo(run));
-    assertThat(caughtThrowable(), instanceOf(LimitExceededException.class));
-    verify(run, times(5)).run();
-    assertThat(clock.now(), is(4L));
-  }
-
-  @Test
-  public void shouldNotIgnoreNotIgnoredException() throws InterruptedException {
-    Runnable run = mock(Runnable.class);
-    doThrow(NumberFormatException.class).doThrow(ArrayIndexOutOfBoundsException.class).doNothing().when(run).run();
-    catchThrowable(() -> trier.ignoring(NumberFormatException.class).tryTo(run));
-    assertThat(caughtThrowable(), instanceOf(ArrayIndexOutOfBoundsException.class));
-    verify(run, times(2)).run();
-    assertThat(clock.now(), is(1L));
-  }
 
 }
