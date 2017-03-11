@@ -14,7 +14,7 @@
  *  limitations under the License.
  *
  */
-package ru.stqa.repeater;
+package ru.stqa.trier;
 
 import java.util.function.Consumer;
 import java.util.function.Function;

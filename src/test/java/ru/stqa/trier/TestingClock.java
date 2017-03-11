@@ -14,7 +14,7 @@
  *  limitations under the License.
  *
  */
-package ru.stqa.repeater;
+package ru.stqa.trier;
 
 class TestingClock implements Clock, Sleeper {
 

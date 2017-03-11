@@ -14,7 +14,7 @@
  *  limitations under the License.
  *
  */
-package ru.stqa.repeater;
+package ru.stqa.trier;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
