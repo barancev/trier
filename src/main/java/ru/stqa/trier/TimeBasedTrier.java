@@ -67,7 +67,7 @@ public class TimeBasedTrier extends Trier {
 
       if (clock.past(end)) {
         String timeoutMessage = String.format(
-          "Timed out after %d seconds trying to perform action %s", duration, r);
+          "Timed out after %d milliseconds trying to perform action %s", duration, r);
         throw new LimitExceededException(timeoutMessage, lastException);
       }
 
@@ -94,7 +94,7 @@ public class TimeBasedTrier extends Trier {
 
       if (clock.past(end)) {
         String timeoutMessage = String.format(
-          "Timed out after %d seconds trying to perform action %s", duration, s);
+          "Timed out after %d milliseconds trying to perform action %s", duration, s);
         throw new LimitExceededException(timeoutMessage, lastException);
       }
 
@@ -119,7 +119,7 @@ public class TimeBasedTrier extends Trier {
 
       if (clock.past(end)) {
         String timeoutMessage = String.format(
-          "Timed out after %d seconds trying to perform action %s", duration, c);
+          "Timed out after %d milliseconds trying to perform action %s", duration, c);
         throw new LimitExceededException(timeoutMessage, lastException);
       }
 
@@ -146,7 +146,7 @@ public class TimeBasedTrier extends Trier {
 
       if (clock.past(end)) {
         String timeoutMessage = String.format(
-          "Timed out after %d seconds trying to perform action %s", duration, f);
+          "Timed out after %d milliseconds trying to perform action %s", duration, f);
         throw new LimitExceededException(timeoutMessage, lastException);
       }
 

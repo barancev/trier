@@ -47,7 +47,8 @@ class CounterBasedTrierTest {
   @BeforeEach
   void init() {
     clock = new TestingClock();
-    trier = new CounterBasedTrier(5, clock, 1L);
+    //trier = new CounterBasedTrier(5, clock, 1L);
+    trier = new TimeBasedTrier(4L, clock, clock, 1L);
   }
 
   @Nested

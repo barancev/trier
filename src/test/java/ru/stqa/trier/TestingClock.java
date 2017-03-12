@@ -26,16 +26,6 @@ class TestingClock implements Clock, Sleeper {
   }
 
   @Override
-  public long laterBy(long duration) {
-    return now + duration;
-  }
-
-  @Override
-  public boolean past(long finish) {
-    return now < finish;
-  }
-
-  @Override
   public void sleep(long duration) {
     now += duration;
   }

@@ -42,6 +42,6 @@ public interface Clock {
    * @param endInMillis The timestamnp to check.
    * @return Whether the given timestamp represents a point in time before the current time.
    */
-  default boolean past(long endInMillis) { return now() > endInMillis; }
+  default boolean past(long endInMillis) { return now() >= endInMillis; }
 
 }
