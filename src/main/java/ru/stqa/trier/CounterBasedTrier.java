@@ -65,7 +65,9 @@ public class CounterBasedTrier extends Trier {
         sleeper.sleep(interval);
       }
     }
-    throw new LimitExceededException(lastException);
+    String message = String.format(
+      "Limit exceeded after %d attempts to perform action %s", n, r);
+    throw new LimitExceededException(message, lastException);
   }
 
   @Override
@@ -87,7 +89,9 @@ public class CounterBasedTrier extends Trier {
         sleeper.sleep(interval);
       }
     }
-    throw new LimitExceededException(lastException);
+    String message = String.format(
+      "Limit exceeded after %d attempts to perform action %s", n, s);
+    throw new LimitExceededException(message, lastException);
   }
 
   @Override
@@ -107,7 +111,9 @@ public class CounterBasedTrier extends Trier {
         sleeper.sleep(interval);
       }
     }
-    throw new LimitExceededException(lastException);
+    String message = String.format(
+      "Limit exceeded after %d attempts to perform action %s", n, c);
+    throw new LimitExceededException(message, lastException);
   }
 
   @Override
@@ -129,7 +135,9 @@ public class CounterBasedTrier extends Trier {
         sleeper.sleep(interval);
       }
     }
-    throw new LimitExceededException(lastException);
+    String message = String.format(
+      "Limit exceeded after %d attempts to perform action %s", n, f);
+    throw new LimitExceededException(message, lastException);
   }
 
 }
