@@ -50,6 +50,7 @@ public class CounterBasedTrier extends Trier {
 
   @Override
   public void tryTo(Runnable r) throws InterruptedException {
+    Throwable lastException = null;
     for (int i = 0; i < n; i++) {
       try {
         r.run();
@@ -58,16 +59,18 @@ public class CounterBasedTrier extends Trier {
         if (! isExceptionIgnored(t)) {
           throw t;
         }
+        lastException = t;
       }
       if (i < n-1) {
         sleeper.sleep(interval);
       }
     }
-    throw new LimitExceededException();
+    throw new LimitExceededException(lastException);
   }
 
   @Override
   public <T> T tryTo(Supplier<T> s) throws InterruptedException {
+    Throwable lastException = null;
     for (int i = 0; i < n; i++) {
       try {
         T res = s.get();
@@ -78,16 +81,18 @@ public class CounterBasedTrier extends Trier {
         if (! isExceptionIgnored(t)) {
           throw t;
         }
+        lastException = t;
       }
       if (i < n-1) {
         sleeper.sleep(interval);
       }
     }
-    throw new LimitExceededException();
+    throw new LimitExceededException(lastException);
   }
 
   @Override
   public <T> void tryTo(Consumer<T> c, T par) throws InterruptedException {
+    Throwable lastException = null;
     for (int i = 0; i < n; i++) {
       try {
         c.accept(par);
@@ -96,16 +101,18 @@ public class CounterBasedTrier extends Trier {
         if (! isExceptionIgnored(t)) {
           throw t;
         }
+        lastException = t;
       }
       if (i < n-1) {
         sleeper.sleep(interval);
       }
     }
-    throw new LimitExceededException();
+    throw new LimitExceededException(lastException);
   }
 
   @Override
   public <T, R> R tryTo(Function<T, R> f, T par) throws InterruptedException {
+    Throwable lastException = null;
     for (int i = 0; i < n; i++) {
       try {
         R res = f.apply(par);
@@ -116,12 +123,13 @@ public class CounterBasedTrier extends Trier {
         if (! isExceptionIgnored(t)) {
           throw t;
         }
+        lastException = t;
       }
       if (i < n-1) {
         sleeper.sleep(interval);
       }
     }
-    throw new LimitExceededException();
+    throw new LimitExceededException(lastException);
   }
 
 }

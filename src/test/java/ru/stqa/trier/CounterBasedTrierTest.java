@@ -27,10 +27,16 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
+import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.CoreMatchers.nullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.doThrow;
 
 @DisplayName("CounterBasedTrier")
 class CounterBasedTrierTest {
@@ -86,8 +92,20 @@ class CounterBasedTrierTest {
     void shouldNotIgnoreIgnoredExceptionThrownAlways() {
       Runnable run = mock(Runnable.class);
       doThrow(NumberFormatException.class).when(run).run();
-      assertThrows(LimitExceededException.class,
+      Throwable thrown = assertThrows(LimitExceededException.class,
         () -> trier.ignoring(NumberFormatException.class).tryTo(run));
+      assertThat(thrown.getCause(), instanceOf(NumberFormatException.class));
+      verify(run, times(5)).run();
+      assertThat(clock.now(), is(4L));
+    }
+
+    @Test
+    void shouldRememberLastThrownException() {
+      Runnable run = mock(Runnable.class);
+      doThrow(ArrayIndexOutOfBoundsException.class).doThrow(NumberFormatException.class).when(run).run();
+      Throwable thrown = assertThrows(LimitExceededException.class,
+        () -> trier.ignoring(NumberFormatException.class, ArrayIndexOutOfBoundsException.class).tryTo(run));
+      assertThat(thrown.getCause(), instanceOf(NumberFormatException.class));
       verify(run, times(5)).run();
       assertThat(clock.now(), is(4L));
     }
@@ -149,8 +167,9 @@ class CounterBasedTrierTest {
     @Test
     void shouldNotIgnoreIgnoredExceptionThrownAlways() {
       when(run.get()).thenThrow(NumberFormatException.class);
-      assertThrows(LimitExceededException.class,
+      Throwable thrown = assertThrows(LimitExceededException.class,
         () -> trier.ignoring(NumberFormatException.class).tryTo(run));
+      assertThat(thrown.getCause(), instanceOf(NumberFormatException.class));
       verify(run, times(5)).get();
       assertThat(clock.now(), is(4L));
     }
@@ -207,8 +226,9 @@ class CounterBasedTrierTest {
     @Test
     void shouldNotIgnoreIgnoredResultReturnedAlways() {
       when(run.get()).thenReturn("FAIL");
-      assertThrows(LimitExceededException.class,
+      Throwable thrown = assertThrows(LimitExceededException.class,
         () -> trier.ignoring(res -> res.equals("FAIL")).tryTo(run));
+      assertThat(thrown.getCause(), nullValue());
       verify(run, times(5)).get();
       assertThat(clock.now(), is(4L));
     }
@@ -216,8 +236,9 @@ class CounterBasedTrierTest {
     @Test
     void shouldNotIgnoreUnexpectedResultReturnedAlways() {
       when(run.get()).thenReturn("FAIL");
-      assertThrows(LimitExceededException.class,
+      Throwable thrown = assertThrows(LimitExceededException.class,
         () -> trier.until(res -> res.equals("OK")).tryTo(run));
+      assertThat(thrown.getCause(), nullValue());
       verify(run, times(5)).get();
       assertThat(clock.now(), is(4L));
     }
@@ -268,8 +289,9 @@ class CounterBasedTrierTest {
     @Test
     void shouldNotIgnoreIgnoredExceptionThrownAlways() {
       doThrow(NumberFormatException.class).when(run).accept("IN");
-      assertThrows(LimitExceededException.class,
+      Throwable thrown = assertThrows(LimitExceededException.class,
         () -> trier.ignoring(NumberFormatException.class).tryTo(run, "IN"));
+      assertThat(thrown.getCause(), instanceOf(NumberFormatException.class));
       verify(run, times(5)).accept("IN");
       assertThat(clock.now(), is(4L));
     }
@@ -330,8 +352,9 @@ class CounterBasedTrierTest {
     @Test
     void shouldNotIgnoreIgnoredExceptionThrownAlways() {
       when(run.apply("IN")).thenThrow(NumberFormatException.class);
-      assertThrows(LimitExceededException.class,
+      Throwable thrown = assertThrows(LimitExceededException.class,
         () -> trier.ignoring(NumberFormatException.class).tryTo(run, "IN"));
+      assertThat(thrown.getCause(), instanceOf(NumberFormatException.class));
       verify(run, times(5)).apply("IN");
       assertThat(clock.now(), is(4L));
     }
@@ -388,8 +411,9 @@ class CounterBasedTrierTest {
     @Test
     void shouldNotIgnoreIgnoredResultReturnedAlways() {
       when(run.apply("IN")).thenReturn("FAIL");
-      assertThrows(LimitExceededException.class,
+      Throwable thrown = assertThrows(LimitExceededException.class,
         () -> trier.ignoring(res -> res.equals("FAIL")).tryTo(run, "IN"));
+      assertThat(thrown.getCause(), nullValue());
       verify(run, times(5)).apply("IN");
       assertThat(clock.now(), is(4L));
     }
@@ -397,8 +421,9 @@ class CounterBasedTrierTest {
     @Test
     void shouldNotIgnoreUnexpectedResultReturnedAlways() {
       when(run.apply("IN")).thenReturn("FAIL");
-      assertThrows(LimitExceededException.class,
+      Throwable thrown = assertThrows(LimitExceededException.class,
         () -> trier.until(res -> res.equals("OK")).tryTo(run, "IN"));
+      assertThat(thrown.getCause(), nullValue());
       verify(run, times(5)).apply("IN");
       assertThat(clock.now(), is(4L));
     }
