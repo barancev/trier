@@ -45,46 +45,6 @@ class CounterBasedTrierTest {
   }
 
   @Nested
-  class BuildingTrier {
-
-    @Test
-    void shouldNotAllowToResetIgnoredExceptions() {
-      trier.ignoring(NumberFormatException.class);
-      assertThrows(IllegalStateException.class,
-        () -> trier.ignoring(NumberFormatException.class));
-    }
-
-    @Test
-    void shouldNotAllowToResetIgnoredResult() {
-      trier.ignoring(res -> res.equals("FAIL"));
-      assertThrows(IllegalStateException.class,
-        () -> trier.ignoring(res -> res.equals("FAIL")));
-    }
-
-    @Test
-    void shouldNotAllowToResetIgnoredResultWithUnexpectedResult() {
-      trier.ignoring(res -> res.equals("FAIL"));
-      assertThrows(IllegalStateException.class,
-        () -> trier.until(res -> res.equals("OK")));
-    }
-
-    @Test
-    void shouldNotAllowToResetUnexpectedResult() {
-      trier.until(res -> res.equals("OK"));
-      assertThrows(IllegalStateException.class,
-        () -> trier.until(res -> res.equals("OK")));
-    }
-
-    @Test
-    void shouldNotAllowToResetUnexpectedResultWithIgnoredResult() {
-      trier.until(res -> res.equals("OK"));
-      assertThrows(IllegalStateException.class,
-        () -> trier.ignoring(res -> res.equals("FAIL")));
-    }
-
-  }
-
-  @Nested
   class TryToRunRunnable {
 
     @Test
