@@ -25,7 +25,7 @@ public interface Clock {
    * @return The current time in milliseconds since epoch time.
    * @see System#currentTimeMillis()
    */
-  default long now() { return System.currentTimeMillis(); };
+  default long now() { return System.currentTimeMillis(); }
 
   /**
    * Computes a point of time in the future.
@@ -34,14 +34,14 @@ public interface Clock {
    *        current time}.
    * @return A timestamp representing a point in the future.
    */
-  default long laterBy(long durationInMillis) { return now() + durationInMillis; };
+  default long laterBy(long durationInMillis) { return now() + durationInMillis; }
 
   /**
-   * Tests if a point in time occurs before the {@link #now() current time}.
+   * Tests if a point in time occurs after the {@link #now() current time}.
    *
    * @param endInMillis The timestamnp to check.
    * @return Whether the given timestamp represents a point in time before the current time.
    */
-  default boolean isNowBefore(long endInMillis) { return now() < endInMillis; };
+  default boolean past(long endInMillis) { return now() > endInMillis; }
 
 }

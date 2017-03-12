@@ -31,7 +31,7 @@ class TestingClock implements Clock, Sleeper {
   }
 
   @Override
-  public boolean isNowBefore(long finish) {
+  public boolean past(long finish) {
     return now < finish;
   }
 

@@ -24,33 +24,37 @@ import java.util.function.Supplier;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
-public class CounterBasedTrier extends Trier {
+public class TimeBasedTrier extends Trier {
 
-  public static CounterBasedTrier times(int n) {
-    return new CounterBasedTrier(n);
+  public static TimeBasedTrier during(long duration) {
+    return new TimeBasedTrier(duration);
   }
 
   private final static long DEFAULT_SLEEP_TIMEOUT = 500;
 
+  private final Clock clock;
   private final Sleeper sleeper;
 
-  private final int n;
+  private final long duration;
   private final long interval;
 
-  public CounterBasedTrier(int n) {
-    this(n, new Sleeper() {}, DEFAULT_SLEEP_TIMEOUT);
+  public TimeBasedTrier(long duration) {
+    this(duration, new Clock() {}, new Sleeper() {}, DEFAULT_SLEEP_TIMEOUT);
   }
 
   @VisibleForTesting
-  CounterBasedTrier(int n, Sleeper sleeper, long interval) {
-    this.n = n;
+  TimeBasedTrier(long duration, Clock clock, Sleeper sleeper, long interval) {
+    this.duration = duration;
+    this.clock = checkNotNull(clock);
     this.sleeper = checkNotNull(sleeper);
     this.interval = checkNotNull(interval);
   }
 
   @Override
   public void tryTo(Runnable r) throws InterruptedException {
-    for (int i = 0; i < n; i++) {
+    long end = clock.laterBy(duration);
+    Throwable lastException = null;
+    while (true) {
       try {
         r.run();
         return;
@@ -58,17 +62,24 @@ public class CounterBasedTrier extends Trier {
         if (! isExceptionIgnored(t)) {
           throw t;
         }
+        lastException = t;
       }
-      if (i < n-1) {
-        sleeper.sleep(interval);
+
+      if (clock.past(end)) {
+        String timeoutMessage = String.format(
+          "Timed out after %d seconds trying to perform action %s", duration, r);
+        throw new LimitExceededException(timeoutMessage, lastException);
       }
+
+      sleeper.sleep(interval);
     }
-    throw new LimitExceededException();
   }
 
   @Override
   public <T> T tryTo(Supplier<T> s) throws InterruptedException {
-    for (int i = 0; i < n; i++) {
+    long end = clock.laterBy(duration);
+    Throwable lastException = null;
+    while (true) {
       try {
         T res = s.get();
         if (! isResultIgnored(res)) {
@@ -78,17 +89,24 @@ public class CounterBasedTrier extends Trier {
         if (! isExceptionIgnored(t)) {
           throw t;
         }
+        lastException = t;
       }
-      if (i < n-1) {
-        sleeper.sleep(interval);
+
+      if (clock.past(end)) {
+        String timeoutMessage = String.format(
+          "Timed out after %d seconds trying to perform action %s", duration, s);
+        throw new LimitExceededException(timeoutMessage, lastException);
       }
+
+      sleeper.sleep(interval);
     }
-    throw new LimitExceededException();
   }
 
   @Override
   public <T> void tryTo(Consumer<T> c, T par) throws InterruptedException {
-    for (int i = 0; i < n; i++) {
+    long end = clock.laterBy(duration);
+    Throwable lastException = null;
+    while (true) {
       try {
         c.accept(par);
         return;
@@ -96,17 +114,24 @@ public class CounterBasedTrier extends Trier {
         if (! isExceptionIgnored(t)) {
           throw t;
         }
+        lastException = t;
       }
-      if (i < n-1) {
-        sleeper.sleep(interval);
+
+      if (clock.past(end)) {
+        String timeoutMessage = String.format(
+          "Timed out after %d seconds trying to perform action %s", duration, c);
+        throw new LimitExceededException(timeoutMessage, lastException);
       }
+
+      sleeper.sleep(interval);
     }
-    throw new LimitExceededException();
   }
 
   @Override
   public <T, R> R tryTo(Function<T, R> f, T par) throws InterruptedException {
-    for (int i = 0; i < n; i++) {
+    long end = clock.laterBy(duration);
+    Throwable lastException = null;
+    while (true) {
       try {
         R res = f.apply(par);
         if (! isResultIgnored(res)) {
@@ -116,12 +141,17 @@ public class CounterBasedTrier extends Trier {
         if (! isExceptionIgnored(t)) {
           throw t;
         }
+        lastException = t;
       }
-      if (i < n-1) {
-        sleeper.sleep(interval);
+
+      if (clock.past(end)) {
+        String timeoutMessage = String.format(
+          "Timed out after %d seconds trying to perform action %s", duration, f);
+        throw new LimitExceededException(timeoutMessage, lastException);
       }
+
+      sleeper.sleep(interval);
     }
-    throw new LimitExceededException();
   }
 
 }
