@@ -1,4 +1,5 @@
-webdriver-repeatable-actions
+Trier
 ====================
 
-webdriver-repeatable-actions is an alternative to "expected conditions": instead of waiting for an element to be ready for an action one can try to perform an action until succeeded
+__Trier is someone who tries hard to succeed in what they do, even if it fails.__\
+Cambridge Dictionary, http://dictionary.cambridge.org/dictionary/english/trier
