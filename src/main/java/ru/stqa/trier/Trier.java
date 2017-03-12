@@ -32,12 +32,26 @@ public abstract class Trier {
   abstract public <T, R> R tryTo(Function<T, R> f, T par) throws InterruptedException;
 
   public Trier ignoring(Class<? extends Throwable>... ignoredExceptions) {
+    if (this.ignoredExceptions != null) {
+      throw new IllegalStateException("Ignored exceptions can be set once only");
+    }
     this.ignoredExceptions = ignoredExceptions;
     return this;
   }
 
   public Trier ignoring(Predicate<Object> ignoredResult) {
+    if (this.ignoredResult != null) {
+      throw new IllegalStateException("Predicate to ignore unwanted results can be set once only");
+    }
     this.ignoredResult = ignoredResult;
+    return this;
+  }
+
+  public Trier until(Predicate<Object> expectedResult) {
+    if (this.ignoredResult != null) {
+      throw new IllegalStateException("Predicate to ignore unwanted results can be set once only");
+    }
+    this.ignoredResult = expectedResult.negate();
     return this;
   }
 
