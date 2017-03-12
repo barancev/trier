@@ -21,6 +21,8 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
+import java.util.function.Consumer;
+import java.util.function.Function;
 import java.util.function.Supplier;
 
 import static org.hamcrest.CoreMatchers.is;
@@ -262,7 +264,190 @@ class CounterBasedTrierTest {
       verify(run, times(5)).get();
       assertThat(clock.now(), is(4L));
     }
+  }
 
+  @Nested
+  class TryToRunConsumer {
+
+    @Test
+    void shouldReturnImmediatelyIfTheConsumerDoesNotThrow() throws InterruptedException {
+      Consumer run = mock(Consumer.class);
+      trier.tryTo(run, "IN");
+      verify(run, times(1)).accept("IN");
+      assertThat(clock.now(), is(0L));
+    }
+
+    @Test
+    void shouldIgnoreIgnoredExceptionThrownOnce() throws InterruptedException {
+      Consumer run = mock(Consumer.class);
+      doThrow(NumberFormatException.class).doNothing().when(run).accept("IN");
+      trier.ignoring(NumberFormatException.class).tryTo(run, "IN");
+      verify(run, times(2)).accept("IN");
+      assertThat(clock.now(), is(1L));
+    }
+
+    @Test
+    void shouldIgnoreIgnoredExceptionThrownSeveralTimes() throws InterruptedException {
+      Consumer run = mock(Consumer.class);
+      doThrow(NumberFormatException.class).doThrow(NumberFormatException.class).doNothing().when(run).accept("IN");
+      trier.ignoring(NumberFormatException.class).tryTo(run, "IN");
+      verify(run, times(3)).accept("IN");
+      assertThat(clock.now(), is(2L));
+    }
+
+    @Test
+    void shouldIgnoreVariousIgnoredException() throws InterruptedException {
+      Consumer run = mock(Consumer.class);
+      doThrow(NumberFormatException.class).doThrow(ArrayIndexOutOfBoundsException.class).doNothing().when(run).accept("IN");
+      trier.ignoring(NumberFormatException.class, ArrayIndexOutOfBoundsException.class).tryTo(run, "IN");
+      verify(run, times(3)).accept("IN");
+      assertThat(clock.now(), is(2L));
+    }
+
+    @Test
+    void shouldNotIgnoreIgnoredExceptionThrownAlways() {
+      Consumer run = mock(Consumer.class);
+      doThrow(NumberFormatException.class).when(run).accept("IN");
+      assertThrows(LimitExceededException.class,
+        () -> trier.ignoring(NumberFormatException.class).tryTo(run, "IN"));
+      verify(run, times(5)).accept("IN");
+      assertThat(clock.now(), is(4L));
+    }
+
+    @Test
+    void shouldNotIgnoreNotIgnoredException() throws InterruptedException {
+      Consumer run = mock(Consumer.class);
+      doThrow(NumberFormatException.class).doThrow(ArrayIndexOutOfBoundsException.class).doNothing().when(run).accept("IN");
+      assertThrows(ArrayIndexOutOfBoundsException.class,
+        () -> trier.ignoring(NumberFormatException.class).tryTo(run, "IN"));
+      verify(run, times(2)).accept("IN");
+      assertThat(clock.now(), is(1L));
+    }
+  }
+
+  @Nested
+  class TryToRunFunction {
+
+    @Test
+    void shouldReturnImmediatelyIfTheFunctionDoesNotThrow() throws InterruptedException {
+      Function run = mock(Function.class);
+      when(run.apply("IN")).thenReturn("OK");
+      assertThat(trier.tryTo(run, "IN"), is("OK"));
+      verify(run, times(1)).apply("IN");
+      assertThat(clock.now(), is(0L));
+    }
+
+    @Test
+    void shouldIgnoreIgnoredExceptionThrownOnce() throws InterruptedException {
+      Function run = mock(Function.class);
+      when(run.apply("IN")).thenThrow(NumberFormatException.class).thenReturn("OK");
+      assertThat(trier.ignoring(NumberFormatException.class).tryTo(run, "IN"), is("OK"));
+      verify(run, times(2)).apply("IN");
+      assertThat(clock.now(), is(1L));
+    }
+
+    @Test
+    void shouldIgnoreIgnoredExceptionThrownSeveralTimes() throws InterruptedException {
+      Function run = mock(Function.class);
+      when(run.apply("IN")).thenThrow(NumberFormatException.class).thenThrow(NumberFormatException.class).thenReturn("OK");
+      assertThat(trier.ignoring(NumberFormatException.class).tryTo(run, "IN"), is("OK"));
+      verify(run, times(3)).apply("IN");
+      assertThat(clock.now(), is(2L));
+    }
+
+    @Test
+    void shouldIgnoreVariousIgnoredException() throws InterruptedException {
+      Function run = mock(Function.class);
+      when(run.apply("IN")).thenThrow(NumberFormatException.class).thenThrow(ArrayIndexOutOfBoundsException.class).thenReturn("OK");
+      assertThat(trier.ignoring(NumberFormatException.class, ArrayIndexOutOfBoundsException.class).tryTo(run, "IN"), is("OK"));
+      verify(run, times(3)).apply("IN");
+      assertThat(clock.now(), is(2L));
+    }
+
+    @Test
+    void shouldNotIgnoreIgnoredExceptionThrownAlways() {
+      Function run = mock(Function.class);
+      when(run.apply("IN")).thenThrow(NumberFormatException.class);
+      assertThrows(LimitExceededException.class,
+        () -> trier.ignoring(NumberFormatException.class).tryTo(run, "IN"));
+      verify(run, times(5)).apply("IN");
+      assertThat(clock.now(), is(4L));
+    }
+
+    @Test
+    void shouldNotIgnoreNotIgnoredException() throws InterruptedException {
+      Function run = mock(Function.class);
+      when(run.apply("IN")).thenThrow(NumberFormatException.class).thenThrow(ArrayIndexOutOfBoundsException.class).thenReturn("OK");
+      assertThrows(ArrayIndexOutOfBoundsException.class,
+        () -> trier.ignoring(NumberFormatException.class).tryTo(run, "IN"));
+      verify(run, times(2)).apply("IN");
+      assertThat(clock.now(), is(1L));
+    }
+
+    @Test
+    void shouldIgnoreIgnoredResultReturnedOnce() throws InterruptedException {
+      Function run = mock(Function.class);
+      when(run.apply("IN")).thenReturn("FAIL").thenReturn("OK");
+      assertThat(trier.ignoring(res -> res.equals("FAIL")).tryTo(run, "IN"), is("OK"));
+      verify(run, times(2)).apply("IN");
+      assertThat(clock.now(), is(1L));
+    }
+
+    @Test
+    void shouldIgnoreUnexpectedResultReturnedOnce() throws InterruptedException {
+      Function run = mock(Function.class);
+      when(run.apply("IN")).thenReturn("FAIL").thenReturn("OK");
+      assertThat(trier.until(res -> res.equals("OK")).tryTo(run, "IN"), is("OK"));
+      verify(run, times(2)).apply("IN");
+      assertThat(clock.now(), is(1L));
+    }
+
+    @Test
+    void shouldIgnoreIgnoredResultReturnedSeveralTimes() throws InterruptedException {
+      Function run = mock(Function.class);
+      when(run.apply("IN")).thenReturn("FAIL").thenReturn("FAIL").thenReturn("OK");
+      assertThat(trier.ignoring(res -> res.equals("FAIL")).tryTo(run, "IN"), is("OK"));
+      verify(run, times(3)).apply("IN");
+      assertThat(clock.now(), is(2L));
+    }
+
+    @Test
+    void shouldIgnoreUnexpectedResultReturnedSeveralTimes() throws InterruptedException {
+      Function run = mock(Function.class);
+      when(run.apply("IN")).thenReturn("FAIL1").thenReturn("FAIL2").thenReturn("OK");
+      assertThat(trier.until(res -> res.equals("OK")).tryTo(run, "IN"), is("OK"));
+      verify(run, times(3)).apply("IN");
+      assertThat(clock.now(), is(2L));
+    }
+
+    @Test
+    void shouldIgnoreBothIgnoredExceptionAndResult() throws InterruptedException {
+      Function run = mock(Function.class);
+      when(run.apply("IN")).thenThrow(NumberFormatException.class).thenReturn("FAIL").thenReturn("OK");
+      assertThat(trier.until(res -> res.equals("OK")).ignoring(NumberFormatException.class).tryTo(run, "IN"), is("OK"));
+      verify(run, times(3)).apply("IN");
+      assertThat(clock.now(), is(2L));
+    }
+
+    @Test
+    void shouldNotIgnoreIgnoredResultReturnedAlways() {
+      Function run = mock(Function.class);
+      when(run.apply("IN")).thenReturn("FAIL");
+      assertThrows(LimitExceededException.class,
+        () -> trier.ignoring(res -> res.equals("FAIL")).tryTo(run, "IN"));
+      verify(run, times(5)).apply("IN");
+      assertThat(clock.now(), is(4L));
+    }
+
+    @Test
+    void shouldNotIgnoreUnexpectedResultReturnedAlways() {
+      Function run = mock(Function.class);
+      when(run.apply("IN")).thenReturn("FAIL");
+      assertThrows(LimitExceededException.class,
+        () -> trier.until(res -> res.equals("OK")).tryTo(run, "IN"));
+      verify(run, times(5)).apply("IN");
+      assertThat(clock.now(), is(4L));
+    }
   }
 
 }

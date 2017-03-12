@@ -92,6 +92,7 @@ public class CounterBasedTrier extends Trier {
     for (int i = 0; i < n; i++) {
       try {
         c.accept(par);
+        return;
       } catch (Throwable t) {
         if (! isExceptionIgnored(t)) {
           throw t;
