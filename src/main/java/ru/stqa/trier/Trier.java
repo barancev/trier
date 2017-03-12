@@ -31,7 +31,8 @@ public abstract class Trier {
   abstract public <T> void tryTo(Consumer<T> c, T par) throws InterruptedException;
   abstract public <T, R> R tryTo(Function<T, R> f, T par) throws InterruptedException;
 
-  public Trier ignoring(Class<? extends Throwable>... ignoredExceptions) {
+  @SafeVarargs
+  final public Trier ignoring(Class<? extends Throwable>... ignoredExceptions) {
     if (this.ignoredExceptions != null) {
       throw new IllegalStateException("Ignored exceptions can be set once only");
     }
@@ -39,7 +40,7 @@ public abstract class Trier {
     return this;
   }
 
-  public Trier ignoring(Predicate<Object> ignoredResult) {
+  final public Trier ignoring(Predicate<Object> ignoredResult) {
     if (this.ignoredResult != null) {
       throw new IllegalStateException("Predicate to ignore unwanted results can be set once only");
     }
@@ -47,7 +48,7 @@ public abstract class Trier {
     return this;
   }
 
-  public Trier until(Predicate<Object> expectedResult) {
+  final public Trier until(Predicate<Object> expectedResult) {
     if (this.ignoredResult != null) {
       throw new IllegalStateException("Predicate to ignore unwanted results can be set once only");
     }
@@ -55,7 +56,7 @@ public abstract class Trier {
     return this;
   }
 
-  protected boolean isExceptionIgnored(Throwable t) {
+  final protected boolean isExceptionIgnored(Throwable t) {
     if (ignoredExceptions !=  null) {
       for (Class<? extends Throwable> cls : ignoredExceptions) {
         if (cls.isAssignableFrom(t.getClass())) {
@@ -66,10 +67,8 @@ public abstract class Trier {
     return false;
   }
 
-  protected <T> boolean isResultIgnored(Object result) {
-    if (ignoredResult != null) {
-      return ignoredResult.test(result);
-    }
-    return false;
+  final protected <T> boolean isResultIgnored(Object result) {
+    return ignoredResult != null && ignoredResult.test(result);
   }
+
 }
