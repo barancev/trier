@@ -62,14 +62,14 @@ class TrierTest {
     }
 
     @Test
-    void shouldReturnImmediatelyIfTheRunnableDoesNotThrow() throws InterruptedException {
+    void shouldReturnImmediatelyIfTheRunnableDoesNotThrow() throws LimitExceededException, InterruptedException {
       trier.tryTo(run);
       verify(run, times(1)).run();
       assertThat(clock.now(), is(0L));
     }
 
     @Test
-    void shouldIgnoreAllExceptionsByDefault() throws InterruptedException {
+    void shouldIgnoreAllExceptionsByDefault() throws LimitExceededException, InterruptedException {
       doThrow(NumberFormatException.class).doThrow(ArrayIndexOutOfBoundsException.class).doNothing().when(run).run();
       trier.tryTo(run);
       verify(run, times(3)).run();
@@ -77,7 +77,7 @@ class TrierTest {
     }
 
     @Test
-    void shouldIgnoreIgnoredExceptionThrownOnce() throws InterruptedException {
+    void shouldIgnoreIgnoredExceptionThrownOnce() throws LimitExceededException, InterruptedException {
       doThrow(NumberFormatException.class).doNothing().when(run).run();
       trier.ignoring(NumberFormatException.class).tryTo(run);
       verify(run, times(2)).run();
@@ -85,7 +85,7 @@ class TrierTest {
     }
 
     @Test
-    void shouldIgnoreIgnoredExceptionThrownSeveralTimes() throws InterruptedException {
+    void shouldIgnoreIgnoredExceptionThrownSeveralTimes() throws LimitExceededException, InterruptedException {
       doThrow(NumberFormatException.class).doThrow(NumberFormatException.class).doNothing().when(run).run();
       trier.ignoring(NumberFormatException.class).tryTo(run);
       verify(run, times(3)).run();
@@ -93,7 +93,7 @@ class TrierTest {
     }
 
     @Test
-    void shouldIgnoreVariousIgnoredException() throws InterruptedException {
+    void shouldIgnoreVariousIgnoredException() throws LimitExceededException, InterruptedException {
       doThrow(NumberFormatException.class).doThrow(ArrayIndexOutOfBoundsException.class).doNothing().when(run).run();
       trier.ignoring(NumberFormatException.class, ArrayIndexOutOfBoundsException.class).tryTo(run);
       verify(run, times(3)).run();
@@ -142,7 +142,7 @@ class TrierTest {
     }
 
     @Test
-    void shouldReturnImmediatelyIfTheSupplierDoesNotThrow() throws InterruptedException {
+    void shouldReturnImmediatelyIfTheSupplierDoesNotThrow() throws LimitExceededException, InterruptedException {
       when(run.get()).thenReturn("OK");
       assertThat(trier.tryTo(run), is("OK"));
       verify(run, times(1)).get();
@@ -150,7 +150,7 @@ class TrierTest {
     }
 
     @Test
-    void shouldIgnoreAllExceptionsByDefault() throws InterruptedException {
+    void shouldIgnoreAllExceptionsByDefault() throws LimitExceededException, InterruptedException {
       when(run.get()).thenThrow(NumberFormatException.class).thenThrow(NumberFormatException.class).thenReturn("OK");
       assertThat(trier.tryTo(run), is("OK"));
       verify(run, times(3)).get();
@@ -158,7 +158,7 @@ class TrierTest {
     }
 
     @Test
-    void shouldIgnoreNullFalseEmptyStringAndEmptyCollectionByDefault() throws InterruptedException {
+    void shouldIgnoreNullFalseEmptyStringAndEmptyCollectionByDefault() throws LimitExceededException, InterruptedException {
       when(run.get()).thenReturn(null).thenReturn("").thenReturn(false).thenReturn(new ArrayList<String>()).thenReturn("OK");
       assertThat(trier.tryTo(run), is("OK"));
       verify(run, times(5)).get();
@@ -166,7 +166,7 @@ class TrierTest {
     }
 
     @Test
-    void shouldIgnoreZeroesByDefault() throws InterruptedException {
+    void shouldIgnoreZeroesByDefault() throws LimitExceededException, InterruptedException {
       when(run.get()).thenReturn(0).thenReturn(0L).thenReturn(0.0).thenReturn("OK");
       assertThat(trier.tryTo(run), is("OK"));
       verify(run, times(4)).get();
@@ -174,7 +174,7 @@ class TrierTest {
     }
 
     @Test
-    void shouldIgnoreIgnoredExceptionThrownOnce() throws InterruptedException {
+    void shouldIgnoreIgnoredExceptionThrownOnce() throws LimitExceededException, InterruptedException {
       when(run.get()).thenThrow(NumberFormatException.class).thenReturn("OK");
       assertThat(trier.ignoring(NumberFormatException.class).tryTo(run), is("OK"));
       verify(run, times(2)).get();
@@ -182,7 +182,7 @@ class TrierTest {
     }
 
     @Test
-    void shouldIgnoreIgnoredExceptionThrownSeveralTimes() throws InterruptedException {
+    void shouldIgnoreIgnoredExceptionThrownSeveralTimes() throws LimitExceededException, InterruptedException {
       when(run.get()).thenThrow(NumberFormatException.class).thenThrow(NumberFormatException.class).thenReturn("OK");
       assertThat(trier.ignoring(NumberFormatException.class).tryTo(run), is("OK"));
       verify(run, times(3)).get();
@@ -190,7 +190,7 @@ class TrierTest {
     }
 
     @Test
-    void shouldIgnoreVariousIgnoredException() throws InterruptedException {
+    void shouldIgnoreVariousIgnoredException() throws LimitExceededException, InterruptedException {
       when(run.get()).thenThrow(NumberFormatException.class).thenThrow(ArrayIndexOutOfBoundsException.class).thenReturn("OK");
       assertThat(trier.ignoring(NumberFormatException.class, ArrayIndexOutOfBoundsException.class).tryTo(run), is("OK"));
       verify(run, times(3)).get();
@@ -217,7 +217,7 @@ class TrierTest {
     }
 
     @Test
-    void shouldIgnoreIgnoredResultReturnedOnce() throws InterruptedException {
+    void shouldIgnoreIgnoredResultReturnedOnce() throws LimitExceededException, InterruptedException {
       when(run.get()).thenReturn("FAIL").thenReturn("OK");
       assertThat(trier.ignoring(res -> res.equals("FAIL")).tryTo(run), is("OK"));
       verify(run, times(2)).get();
@@ -225,7 +225,7 @@ class TrierTest {
     }
 
     @Test
-    void shouldIgnoreUnexpectedResultReturnedOnce() throws InterruptedException {
+    void shouldIgnoreUnexpectedResultReturnedOnce() throws LimitExceededException, InterruptedException {
       when(run.get()).thenReturn("FAIL").thenReturn("OK");
       assertThat(trier.until(res -> res.equals("OK")).tryTo(run), is("OK"));
       verify(run, times(2)).get();
@@ -233,7 +233,7 @@ class TrierTest {
     }
 
     @Test
-    void shouldIgnoreIgnoredResultReturnedSeveralTimes() throws InterruptedException {
+    void shouldIgnoreIgnoredResultReturnedSeveralTimes() throws LimitExceededException, InterruptedException {
       when(run.get()).thenReturn("FAIL").thenReturn("FAIL").thenReturn("OK");
       assertThat(trier.ignoring(res -> res.equals("FAIL")).tryTo(run), is("OK"));
       verify(run, times(3)).get();
@@ -241,7 +241,7 @@ class TrierTest {
     }
 
     @Test
-    void shouldIgnoreUnexpectedResultReturnedSeveralTimes() throws InterruptedException {
+    void shouldIgnoreUnexpectedResultReturnedSeveralTimes() throws LimitExceededException, InterruptedException {
       when(run.get()).thenReturn("FAIL1").thenReturn("FAIL2").thenReturn("OK");
       assertThat(trier.until(res -> res.equals("OK")).tryTo(run), is("OK"));
       verify(run, times(3)).get();
@@ -249,7 +249,7 @@ class TrierTest {
     }
 
     @Test
-    void shouldIgnoreBothIgnoredExceptionAndResult() throws InterruptedException {
+    void shouldIgnoreBothIgnoredExceptionAndResult() throws LimitExceededException, InterruptedException {
       when(run.get()).thenThrow(NumberFormatException.class).thenReturn("FAIL").thenReturn("OK");
       assertThat(trier.until(res -> res.equals("OK")).ignoring(NumberFormatException.class).tryTo(run), is("OK"));
       verify(run, times(3)).get();
@@ -289,14 +289,14 @@ class TrierTest {
     }
 
     @Test
-    void shouldReturnImmediatelyIfTheConsumerDoesNotThrow() throws InterruptedException {
+    void shouldReturnImmediatelyIfTheConsumerDoesNotThrow() throws LimitExceededException, InterruptedException {
       trier.tryTo(run, "IN");
       verify(run, times(1)).accept("IN");
       assertThat(clock.now(), is(0L));
     }
 
     @Test
-    void shouldIgnoreAllExceptionsByDefault() throws InterruptedException {
+    void shouldIgnoreAllExceptionsByDefault() throws LimitExceededException, InterruptedException {
       doThrow(NumberFormatException.class).doThrow(ArrayIndexOutOfBoundsException.class).doNothing().when(run).accept("IN");
       trier.tryTo(run, "IN");
       verify(run, times(3)).accept("IN");
@@ -304,7 +304,7 @@ class TrierTest {
     }
 
     @Test
-    void shouldIgnoreIgnoredExceptionThrownOnce() throws InterruptedException {
+    void shouldIgnoreIgnoredExceptionThrownOnce() throws LimitExceededException, InterruptedException {
       doThrow(NumberFormatException.class).doNothing().when(run).accept("IN");
       trier.ignoring(NumberFormatException.class).tryTo(run, "IN");
       verify(run, times(2)).accept("IN");
@@ -312,7 +312,7 @@ class TrierTest {
     }
 
     @Test
-    void shouldIgnoreIgnoredExceptionThrownSeveralTimes() throws InterruptedException {
+    void shouldIgnoreIgnoredExceptionThrownSeveralTimes() throws LimitExceededException, InterruptedException {
       doThrow(NumberFormatException.class).doThrow(NumberFormatException.class).doNothing().when(run).accept("IN");
       trier.ignoring(NumberFormatException.class).tryTo(run, "IN");
       verify(run, times(3)).accept("IN");
@@ -320,7 +320,7 @@ class TrierTest {
     }
 
     @Test
-    void shouldIgnoreVariousIgnoredException() throws InterruptedException {
+    void shouldIgnoreVariousIgnoredException() throws LimitExceededException, InterruptedException {
       doThrow(NumberFormatException.class).doThrow(ArrayIndexOutOfBoundsException.class).doNothing().when(run).accept("IN");
       trier.ignoring(NumberFormatException.class, ArrayIndexOutOfBoundsException.class).tryTo(run, "IN");
       verify(run, times(3)).accept("IN");
@@ -359,7 +359,7 @@ class TrierTest {
     }
 
     @Test
-    void shouldReturnImmediatelyIfTheFunctionDoesNotThrow() throws InterruptedException {
+    void shouldReturnImmediatelyIfTheFunctionDoesNotThrow() throws LimitExceededException, InterruptedException {
       when(run.apply("IN")).thenReturn("OK");
       assertThat(trier.tryTo(run, "IN"), is("OK"));
       verify(run, times(1)).apply("IN");
@@ -367,7 +367,7 @@ class TrierTest {
     }
 
     @Test
-    void shouldIgnoreAllExceptionsByDefault() throws InterruptedException {
+    void shouldIgnoreAllExceptionsByDefault() throws LimitExceededException, InterruptedException {
       when(run.apply("IN")).thenThrow(NumberFormatException.class).thenThrow(NumberFormatException.class).thenReturn("OK");
       assertThat(trier.tryTo(run, "IN"), is("OK"));
       verify(run, times(3)).apply("IN");
@@ -375,7 +375,7 @@ class TrierTest {
     }
 
     @Test
-    void shouldIgnoreNullFalseEmptyStringAndEmptyCollectionByDefault() throws InterruptedException {
+    void shouldIgnoreNullFalseEmptyStringAndEmptyCollectionByDefault() throws LimitExceededException, InterruptedException {
       when(run.apply("IN")).thenReturn(null).thenReturn("").thenReturn(false).thenReturn(new ArrayList<String>()).thenReturn("OK");
       assertThat(trier.tryTo(run, "IN"), is("OK"));
       verify(run, times(5)).apply("IN");
@@ -383,7 +383,7 @@ class TrierTest {
     }
 
     @Test
-    void shouldIgnoreZeroesByDefault() throws InterruptedException {
+    void shouldIgnoreZeroesByDefault() throws LimitExceededException, InterruptedException {
       when(run.apply("IN")).thenReturn(0).thenReturn(0L).thenReturn(0.0).thenReturn("OK");
       assertThat(trier.tryTo(run, "IN"), is("OK"));
       verify(run, times(4)).apply("IN");
@@ -391,7 +391,7 @@ class TrierTest {
     }
 
     @Test
-    void shouldIgnoreIgnoredExceptionThrownOnce() throws InterruptedException {
+    void shouldIgnoreIgnoredExceptionThrownOnce() throws LimitExceededException, InterruptedException {
       when(run.apply("IN")).thenThrow(NumberFormatException.class).thenReturn("OK");
       assertThat(trier.ignoring(NumberFormatException.class).tryTo(run, "IN"), is("OK"));
       verify(run, times(2)).apply("IN");
@@ -399,7 +399,7 @@ class TrierTest {
     }
 
     @Test
-    void shouldIgnoreIgnoredExceptionThrownSeveralTimes() throws InterruptedException {
+    void shouldIgnoreIgnoredExceptionThrownSeveralTimes() throws LimitExceededException, InterruptedException {
       when(run.apply("IN")).thenThrow(NumberFormatException.class).thenThrow(NumberFormatException.class).thenReturn("OK");
       assertThat(trier.ignoring(NumberFormatException.class).tryTo(run, "IN"), is("OK"));
       verify(run, times(3)).apply("IN");
@@ -407,7 +407,7 @@ class TrierTest {
     }
 
     @Test
-    void shouldIgnoreVariousIgnoredException() throws InterruptedException {
+    void shouldIgnoreVariousIgnoredException() throws LimitExceededException, InterruptedException {
       when(run.apply("IN")).thenThrow(NumberFormatException.class).thenThrow(ArrayIndexOutOfBoundsException.class).thenReturn("OK");
       assertThat(trier.ignoring(NumberFormatException.class, ArrayIndexOutOfBoundsException.class).tryTo(run, "IN"), is("OK"));
       verify(run, times(3)).apply("IN");
@@ -434,7 +434,7 @@ class TrierTest {
     }
 
     @Test
-    void shouldIgnoreIgnoredResultReturnedOnce() throws InterruptedException {
+    void shouldIgnoreIgnoredResultReturnedOnce() throws LimitExceededException, InterruptedException {
       when(run.apply("IN")).thenReturn("FAIL").thenReturn("OK");
       assertThat(trier.ignoring(res -> res.equals("FAIL")).tryTo(run, "IN"), is("OK"));
       verify(run, times(2)).apply("IN");
@@ -442,7 +442,7 @@ class TrierTest {
     }
 
     @Test
-    void shouldIgnoreUnexpectedResultReturnedOnce() throws InterruptedException {
+    void shouldIgnoreUnexpectedResultReturnedOnce() throws LimitExceededException, InterruptedException {
       when(run.apply("IN")).thenReturn("FAIL").thenReturn("OK");
       assertThat(trier.until(res -> res.equals("OK")).tryTo(run, "IN"), is("OK"));
       verify(run, times(2)).apply("IN");
@@ -450,7 +450,7 @@ class TrierTest {
     }
 
     @Test
-    void shouldIgnoreIgnoredResultReturnedSeveralTimes() throws InterruptedException {
+    void shouldIgnoreIgnoredResultReturnedSeveralTimes() throws LimitExceededException, InterruptedException {
       when(run.apply("IN")).thenReturn("FAIL").thenReturn("FAIL").thenReturn("OK");
       assertThat(trier.ignoring(res -> res.equals("FAIL")).tryTo(run, "IN"), is("OK"));
       verify(run, times(3)).apply("IN");
@@ -458,7 +458,7 @@ class TrierTest {
     }
 
     @Test
-    void shouldIgnoreUnexpectedResultReturnedSeveralTimes() throws InterruptedException {
+    void shouldIgnoreUnexpectedResultReturnedSeveralTimes() throws LimitExceededException, InterruptedException {
       when(run.apply("IN")).thenReturn("FAIL1").thenReturn("FAIL2").thenReturn("OK");
       assertThat(trier.until(res -> res.equals("OK")).tryTo(run, "IN"), is("OK"));
       verify(run, times(3)).apply("IN");
@@ -466,7 +466,7 @@ class TrierTest {
     }
 
     @Test
-    void shouldIgnoreBothIgnoredExceptionAndResult() throws InterruptedException {
+    void shouldIgnoreBothIgnoredExceptionAndResult() throws LimitExceededException, InterruptedException {
       when(run.apply("IN")).thenThrow(NumberFormatException.class).thenReturn("FAIL").thenReturn("OK");
       assertThat(trier.until(res -> res.equals("OK")).ignoring(NumberFormatException.class).tryTo(run, "IN"), is("OK"));
       verify(run, times(3)).apply("IN");

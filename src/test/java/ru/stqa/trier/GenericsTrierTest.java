@@ -49,7 +49,7 @@ class GenericsTrierTest {
   }
 
   @Test
-  void shouldBeAbleToUseGenerics() throws InterruptedException {
+  void shouldBeAbleToUseGenerics() throws LimitExceededException, InterruptedException {
     when(run.get()).thenReturn(new ArrayList<>()).thenReturn(Arrays.asList("OK"));
     List<String> result = trier.ignoring(List::isEmpty).tryTo(run);
     assertThat(result, is(Arrays.asList("OK")));
@@ -58,7 +58,7 @@ class GenericsTrierTest {
   }
 
   @Test
-  void shouldBeAbleToUseGenerics2() throws InterruptedException {
+  void shouldBeAbleToUseGenerics2() throws LimitExceededException, InterruptedException {
     when(run.get()).thenReturn(new ArrayList<>()).thenReturn(Arrays.asList("OK"));
     List<String> result = CounterBasedTrier.times(5).tryTo(run);
     assertThat(result, is(Arrays.asList("OK")));
