@@ -36,7 +36,7 @@ import static org.mockito.Mockito.when;
 class GenericsTrierTest {
 
   private TestingClock clock;
-  private Trier<List> trier;
+  private Trier<List<String>> trier;
 
   @Mock
   Supplier<List<String>> run;
@@ -51,9 +51,18 @@ class GenericsTrierTest {
   @Test
   void shouldBeAbleToUseGenerics() throws InterruptedException {
     when(run.get()).thenReturn(new ArrayList<>()).thenReturn(Arrays.asList("OK"));
-    assertThat(trier.ignoring(List::isEmpty).tryTo(run), is(Arrays.asList("OK")));
+    List<String> result = trier.ignoring(List::isEmpty).tryTo(run);
+    assertThat(result, is(Arrays.asList("OK")));
     verify(run, times(2)).get();
     assertThat(clock.now(), is(1L));
+  }
+
+  @Test
+  void shouldBeAbleToUseGenerics2() throws InterruptedException {
+    when(run.get()).thenReturn(new ArrayList<>()).thenReturn(Arrays.asList("OK"));
+    List<String> result = CounterBasedTrier.times(5).tryTo(run);
+    assertThat(result, is(Arrays.asList("OK")));
+    verify(run, times(2)).get();
   }
 
 }

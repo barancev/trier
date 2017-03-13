@@ -33,7 +33,7 @@ public abstract class Trier<X> {
   abstract public <T, R extends X> R tryTo(Function<T, R> f, T par) throws InterruptedException;
 
   @SafeVarargs
-  final public Trier ignoring(Class<? extends Throwable>... ignoredExceptions) {
+  final public Trier<X> ignoring(Class<? extends Throwable>... ignoredExceptions) {
     if (this.ignoredExceptions != null) {
       throw new IllegalStateException("Ignored exceptions can be set once only");
     }
@@ -41,7 +41,7 @@ public abstract class Trier<X> {
     return this;
   }
 
-  final public Trier ignoring(Predicate<X> ignoredResult) {
+  final public Trier<X> ignoring(Predicate<X> ignoredResult) {
     if (this.ignoredResult != null) {
       throw new IllegalStateException("Predicate to ignore unwanted results can be set once only");
     }
@@ -49,7 +49,7 @@ public abstract class Trier<X> {
     return this;
   }
 
-  final public Trier until(Predicate<X> expectedResult) {
+  final public Trier<X> until(Predicate<X> expectedResult) {
     if (this.ignoredResult != null) {
       throw new IllegalStateException("Predicate to ignore unwanted results can be set once only");
     }
