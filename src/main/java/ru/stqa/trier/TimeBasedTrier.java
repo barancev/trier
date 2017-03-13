@@ -23,7 +23,7 @@ import java.util.function.Supplier;
 public class TimeBasedTrier<X> extends Trier<X> {
 
   public static <T> TimeBasedTrier<T> during(long duration) {
-    return new TimeBasedTrier<T>(duration);
+    return new TimeBasedTrier<>(duration);
   }
 
   private final static long DEFAULT_SLEEP_TIMEOUT = 500;
@@ -50,7 +50,7 @@ public class TimeBasedTrier<X> extends Trier<X> {
   }
 
   @Override
-  public void tryTo(Runnable r) throws InterruptedException {
+  public void tryTo(Runnable r) throws LimitExceededException, InterruptedException {
     long end = clock.laterBy(duration);
     Throwable lastException = null;
     while (true) {
@@ -75,7 +75,7 @@ public class TimeBasedTrier<X> extends Trier<X> {
   }
 
   @Override
-  public <T extends X> T tryTo(Supplier<T> s) throws InterruptedException {
+  public <T extends X> T tryTo(Supplier<T> s) throws LimitExceededException, InterruptedException {
     long end = clock.laterBy(duration);
     Throwable lastException = null;
     while (true) {
@@ -102,7 +102,7 @@ public class TimeBasedTrier<X> extends Trier<X> {
   }
 
   @Override
-  public <T> void tryTo(Consumer<T> c, T par) throws InterruptedException {
+  public <T> void tryTo(Consumer<T> c, T par) throws LimitExceededException, InterruptedException {
     long end = clock.laterBy(duration);
     Throwable lastException = null;
     while (true) {
@@ -127,7 +127,7 @@ public class TimeBasedTrier<X> extends Trier<X> {
   }
 
   @Override
-  public <T, R extends X> R tryTo(Function<T, R> f, T par) throws InterruptedException {
+  public <T, R extends X> R tryTo(Function<T, R> f, T par) throws LimitExceededException, InterruptedException {
     long end = clock.laterBy(duration);
     Throwable lastException = null;
     while (true) {

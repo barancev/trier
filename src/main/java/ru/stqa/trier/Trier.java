@@ -27,10 +27,10 @@ public abstract class Trier<X> {
   private Class<? extends Throwable>[] ignoredExceptions;
   private Predicate<X> ignoredResult;
 
-  abstract public void tryTo(Runnable r) throws InterruptedException;
-  abstract public <T extends X> T tryTo(Supplier<T> s) throws InterruptedException;
-  abstract public <T> void tryTo(Consumer<T> c, T par) throws InterruptedException;
-  abstract public <T, R extends X> R tryTo(Function<T, R> f, T par) throws InterruptedException;
+  abstract public void tryTo(Runnable r) throws LimitExceededException, InterruptedException;
+  abstract public <T extends X> T tryTo(Supplier<T> s) throws LimitExceededException, InterruptedException;
+  abstract public <T> void tryTo(Consumer<T> c, T par) throws LimitExceededException, InterruptedException;
+  abstract public <T, R extends X> R tryTo(Function<T, R> f, T par) throws LimitExceededException, InterruptedException;
 
   @SafeVarargs
   final public Trier<X> ignoring(Class<? extends Throwable>... ignoredExceptions) {

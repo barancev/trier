@@ -16,7 +16,7 @@
  */
 package ru.stqa.trier;
 
-public class LimitExceededException extends RuntimeException {
+public class LimitExceededException extends Exception {
   public LimitExceededException(String msg, Throwable e) {
     super(msg, e);
   }

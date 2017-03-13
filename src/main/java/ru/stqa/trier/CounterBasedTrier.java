@@ -23,7 +23,7 @@ import java.util.function.Supplier;
 public class CounterBasedTrier<X> extends Trier<X> {
 
   public static <X> CounterBasedTrier<X> times(int n) {
-    return new CounterBasedTrier<X>(n);
+    return new CounterBasedTrier<>(n);
   }
 
   private final static long DEFAULT_SLEEP_TIMEOUT = 500;
@@ -48,7 +48,7 @@ public class CounterBasedTrier<X> extends Trier<X> {
   }
 
   @Override
-  public void tryTo(Runnable r) throws InterruptedException {
+  public void tryTo(Runnable r) throws LimitExceededException, InterruptedException {
     Throwable lastException = null;
     for (int i = 0; i < n; i++) {
       try {
@@ -70,7 +70,7 @@ public class CounterBasedTrier<X> extends Trier<X> {
   }
 
   @Override
-  public <T extends X> T tryTo(Supplier<T> s) throws InterruptedException {
+  public <T extends X> T tryTo(Supplier<T> s) throws LimitExceededException, InterruptedException {
     Throwable lastException = null;
     for (int i = 0; i < n; i++) {
       try {
@@ -94,7 +94,7 @@ public class CounterBasedTrier<X> extends Trier<X> {
   }
 
   @Override
-  public <T> void tryTo(Consumer<T> c, T par) throws InterruptedException {
+  public <T> void tryTo(Consumer<T> c, T par) throws LimitExceededException, InterruptedException {
     Throwable lastException = null;
     for (int i = 0; i < n; i++) {
       try {
@@ -116,7 +116,7 @@ public class CounterBasedTrier<X> extends Trier<X> {
   }
 
   @Override
-  public <T, R extends X> R tryTo(Function<T, R> f, T par) throws InterruptedException {
+  public <T, R extends X> R tryTo(Function<T, R> f, T par) throws LimitExceededException, InterruptedException {
     Throwable lastException = null;
     for (int i = 0; i < n; i++) {
       try {
