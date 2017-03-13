@@ -16,13 +16,9 @@
  */
 package ru.stqa.trier;
 
-import com.google.common.annotations.VisibleForTesting;
-
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
-
-import static com.google.common.base.Preconditions.checkNotNull;
 
 public class TimeBasedTrier<X> extends Trier<X> {
 
@@ -46,8 +42,7 @@ public class TimeBasedTrier<X> extends Trier<X> {
     this(duration, new Clock() {}, new Sleeper() {}, interval);
   }
 
-  @VisibleForTesting
-  TimeBasedTrier(long duration, Clock clock, Sleeper sleeper, long interval) {
+  public TimeBasedTrier(long duration, Clock clock, Sleeper sleeper, long interval) {
     this.duration = duration;
     this.clock = checkNotNull(clock);
     this.sleeper = checkNotNull(sleeper);

@@ -97,4 +97,11 @@ public abstract class Trier<X> {
     }
   }
 
+  <X> X checkNotNull(X reference) {
+    if(reference == null) {
+      throw new NullPointerException();
+    } else {
+      return reference;
+    }
+  }
 }

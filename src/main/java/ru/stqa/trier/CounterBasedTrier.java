@@ -16,13 +16,9 @@
  */
 package ru.stqa.trier;
 
-import com.google.common.annotations.VisibleForTesting;
-
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
-
-import static com.google.common.base.Preconditions.checkNotNull;
 
 public class CounterBasedTrier<X> extends Trier<X> {
 
@@ -45,8 +41,7 @@ public class CounterBasedTrier<X> extends Trier<X> {
     this(n, new Sleeper() {}, interval);
   }
 
-  @VisibleForTesting
-  CounterBasedTrier(int n, Sleeper sleeper, long interval) {
+  public CounterBasedTrier(int n, Sleeper sleeper, long interval) {
     this.n = n;
     this.sleeper = checkNotNull(sleeper);
     this.interval = checkNotNull(interval);
