@@ -42,6 +42,10 @@ public class TimeBasedTrier extends Trier {
     this(duration, new Clock() {}, new Sleeper() {}, DEFAULT_SLEEP_TIMEOUT);
   }
 
+  public TimeBasedTrier(long duration, long interval) {
+    this(duration, new Clock() {}, new Sleeper() {}, interval);
+  }
+
   @VisibleForTesting
   TimeBasedTrier(long duration, Clock clock, Sleeper sleeper, long interval) {
     this.duration = duration;

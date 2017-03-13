@@ -41,6 +41,10 @@ public class CounterBasedTrier extends Trier {
     this(n, new Sleeper() {}, DEFAULT_SLEEP_TIMEOUT);
   }
 
+  public CounterBasedTrier(int n, long interval) {
+    this(n, new Sleeper() {}, interval);
+  }
+
   @VisibleForTesting
   CounterBasedTrier(int n, Sleeper sleeper, long interval) {
     this.n = n;
