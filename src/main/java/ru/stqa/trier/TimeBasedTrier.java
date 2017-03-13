@@ -24,10 +24,10 @@ import java.util.function.Supplier;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
-public class TimeBasedTrier extends Trier {
+public class TimeBasedTrier<X> extends Trier<X> {
 
-  public static TimeBasedTrier during(long duration) {
-    return new TimeBasedTrier(duration);
+  public static <T> TimeBasedTrier<T> during(long duration) {
+    return new TimeBasedTrier<T>(duration);
   }
 
   private final static long DEFAULT_SLEEP_TIMEOUT = 500;
@@ -80,7 +80,7 @@ public class TimeBasedTrier extends Trier {
   }
 
   @Override
-  public <T> T tryTo(Supplier<T> s) throws InterruptedException {
+  public <T extends X> T tryTo(Supplier<T> s) throws InterruptedException {
     long end = clock.laterBy(duration);
     Throwable lastException = null;
     while (true) {
@@ -132,7 +132,7 @@ public class TimeBasedTrier extends Trier {
   }
 
   @Override
-  public <T, R> R tryTo(Function<T, R> f, T par) throws InterruptedException {
+  public <T, R extends X> R tryTo(Function<T, R> f, T par) throws InterruptedException {
     long end = clock.laterBy(duration);
     Throwable lastException = null;
     while (true) {

@@ -38,8 +38,7 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.doThrow;
 
-@DisplayName("CounterBasedTrier")
-class CounterBasedTrierTest {
+class TrierTest {
 
   private TestingClock clock;
   private Trier trier;
@@ -54,17 +53,31 @@ class CounterBasedTrierTest {
   @Nested
   class TryToRunRunnable {
 
+    @Mock
+    Runnable run;
+
+    @BeforeEach
+    void initMocks() {
+      MockitoAnnotations.initMocks(this);
+    }
+
     @Test
     void shouldReturnImmediatelyIfTheRunnableDoesNotThrow() throws InterruptedException {
-      Runnable run = mock(Runnable.class);
       trier.tryTo(run);
       verify(run, times(1)).run();
       assertThat(clock.now(), is(0L));
     }
 
     @Test
+    void shouldIgnoreAllExceptionsByDefault() throws InterruptedException {
+      doThrow(NumberFormatException.class).doThrow(ArrayIndexOutOfBoundsException.class).doNothing().when(run).run();
+      trier.tryTo(run);
+      verify(run, times(3)).run();
+      assertThat(clock.now(), is(2L));
+    }
+
+    @Test
     void shouldIgnoreIgnoredExceptionThrownOnce() throws InterruptedException {
-      Runnable run = mock(Runnable.class);
       doThrow(NumberFormatException.class).doNothing().when(run).run();
       trier.ignoring(NumberFormatException.class).tryTo(run);
       verify(run, times(2)).run();
@@ -73,7 +86,6 @@ class CounterBasedTrierTest {
 
     @Test
     void shouldIgnoreIgnoredExceptionThrownSeveralTimes() throws InterruptedException {
-      Runnable run = mock(Runnable.class);
       doThrow(NumberFormatException.class).doThrow(NumberFormatException.class).doNothing().when(run).run();
       trier.ignoring(NumberFormatException.class).tryTo(run);
       verify(run, times(3)).run();
@@ -82,7 +94,6 @@ class CounterBasedTrierTest {
 
     @Test
     void shouldIgnoreVariousIgnoredException() throws InterruptedException {
-      Runnable run = mock(Runnable.class);
       doThrow(NumberFormatException.class).doThrow(ArrayIndexOutOfBoundsException.class).doNothing().when(run).run();
       trier.ignoring(NumberFormatException.class, ArrayIndexOutOfBoundsException.class).tryTo(run);
       verify(run, times(3)).run();
@@ -91,7 +102,6 @@ class CounterBasedTrierTest {
 
     @Test
     void shouldNotIgnoreIgnoredExceptionThrownAlways() {
-      Runnable run = mock(Runnable.class);
       doThrow(NumberFormatException.class).when(run).run();
       Throwable thrown = assertThrows(LimitExceededException.class,
         () -> trier.ignoring(NumberFormatException.class).tryTo(run));
@@ -102,7 +112,6 @@ class CounterBasedTrierTest {
 
     @Test
     void shouldRememberLastThrownException() {
-      Runnable run = mock(Runnable.class);
       doThrow(ArrayIndexOutOfBoundsException.class).doThrow(NumberFormatException.class).when(run).run();
       Throwable thrown = assertThrows(LimitExceededException.class,
         () -> trier.ignoring(NumberFormatException.class, ArrayIndexOutOfBoundsException.class).tryTo(run));
@@ -113,7 +122,6 @@ class CounterBasedTrierTest {
 
     @Test
     void shouldNotIgnoreNotIgnoredException() throws InterruptedException {
-      Runnable run = mock(Runnable.class);
       doThrow(NumberFormatException.class).doThrow(ArrayIndexOutOfBoundsException.class).doNothing().when(run).run();
       assertThrows(ArrayIndexOutOfBoundsException.class,
         () -> trier.ignoring(NumberFormatException.class).tryTo(run));
@@ -139,6 +147,14 @@ class CounterBasedTrierTest {
       assertThat(trier.tryTo(run), is("OK"));
       verify(run, times(1)).get();
       assertThat(clock.now(), is(0L));
+    }
+
+    @Test
+    void shouldIgnoreAllExceptionsByDefault() throws InterruptedException {
+      when(run.get()).thenThrow(NumberFormatException.class).thenThrow(NumberFormatException.class).thenReturn("OK");
+      assertThat(trier.tryTo(run), is("OK"));
+      verify(run, times(3)).get();
+      assertThat(clock.now(), is(2L));
     }
 
     @Test
@@ -264,6 +280,14 @@ class CounterBasedTrierTest {
     }
 
     @Test
+    void shouldIgnoreAllExceptionsByDefault() throws InterruptedException {
+      doThrow(NumberFormatException.class).doThrow(ArrayIndexOutOfBoundsException.class).doNothing().when(run).accept("IN");
+      trier.tryTo(run, "IN");
+      verify(run, times(3)).accept("IN");
+      assertThat(clock.now(), is(2L));
+    }
+
+    @Test
     void shouldIgnoreIgnoredExceptionThrownOnce() throws InterruptedException {
       doThrow(NumberFormatException.class).doNothing().when(run).accept("IN");
       trier.ignoring(NumberFormatException.class).tryTo(run, "IN");
@@ -324,6 +348,14 @@ class CounterBasedTrierTest {
       assertThat(trier.tryTo(run, "IN"), is("OK"));
       verify(run, times(1)).apply("IN");
       assertThat(clock.now(), is(0L));
+    }
+
+    @Test
+    void shouldIgnoreAllExceptionsByDefault() throws InterruptedException {
+      when(run.apply("IN")).thenThrow(NumberFormatException.class).thenThrow(NumberFormatException.class).thenReturn("OK");
+      assertThat(trier.tryTo(run, "IN"), is("OK"));
+      verify(run, times(3)).apply("IN");
+      assertThat(clock.now(), is(2L));
     }
 
     @Test

@@ -21,15 +21,15 @@ import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
 
-public abstract class Trier {
+public abstract class Trier<X> {
 
   private Class<? extends Throwable>[] ignoredExceptions;
-  private Predicate<Object> ignoredResult;
+  private Predicate<X> ignoredResult;
 
   abstract public void tryTo(Runnable r) throws InterruptedException;
-  abstract public <T> T tryTo(Supplier<T> s) throws InterruptedException;
+  abstract public <T extends X> T tryTo(Supplier<T> s) throws InterruptedException;
   abstract public <T> void tryTo(Consumer<T> c, T par) throws InterruptedException;
-  abstract public <T, R> R tryTo(Function<T, R> f, T par) throws InterruptedException;
+  abstract public <T, R extends X> R tryTo(Function<T, R> f, T par) throws InterruptedException;
 
   @SafeVarargs
   final public Trier ignoring(Class<? extends Throwable>... ignoredExceptions) {
@@ -40,7 +40,7 @@ public abstract class Trier {
     return this;
   }
 
-  final public Trier ignoring(Predicate<Object> ignoredResult) {
+  final public Trier ignoring(Predicate<X> ignoredResult) {
     if (this.ignoredResult != null) {
       throw new IllegalStateException("Predicate to ignore unwanted results can be set once only");
     }
@@ -48,7 +48,7 @@ public abstract class Trier {
     return this;
   }
 
-  final public Trier until(Predicate<Object> expectedResult) {
+  final public Trier until(Predicate<X> expectedResult) {
     if (this.ignoredResult != null) {
       throw new IllegalStateException("Predicate to ignore unwanted results can be set once only");
     }
@@ -57,17 +57,21 @@ public abstract class Trier {
   }
 
   final protected boolean isExceptionIgnored(Throwable t) {
-    if (ignoredExceptions !=  null) {
+    if (ignoredExceptions != null) {
       for (Class<? extends Throwable> cls : ignoredExceptions) {
         if (cls.isAssignableFrom(t.getClass())) {
           return true;
         }
       }
+      return false;
+
+    } else {
+      // By default ignore all exceptions
+      return true;
     }
-    return false;
   }
 
-  final protected <T> boolean isResultIgnored(Object result) {
+  final protected <T> boolean isResultIgnored(X result) {
     return ignoredResult != null && ignoredResult.test(result);
   }
 

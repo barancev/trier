@@ -24,10 +24,10 @@ import java.util.function.Supplier;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
-public class CounterBasedTrier extends Trier {
+public class CounterBasedTrier<X> extends Trier<X> {
 
-  public static CounterBasedTrier times(int n) {
-    return new CounterBasedTrier(n);
+  public static <X> CounterBasedTrier<X> times(int n) {
+    return new CounterBasedTrier<X>(n);
   }
 
   private final static long DEFAULT_SLEEP_TIMEOUT = 500;
@@ -75,7 +75,7 @@ public class CounterBasedTrier extends Trier {
   }
 
   @Override
-  public <T> T tryTo(Supplier<T> s) throws InterruptedException {
+  public <T extends X> T tryTo(Supplier<T> s) throws InterruptedException {
     Throwable lastException = null;
     for (int i = 0; i < n; i++) {
       try {
@@ -121,7 +121,7 @@ public class CounterBasedTrier extends Trier {
   }
 
   @Override
-  public <T, R> R tryTo(Function<T, R> f, T par) throws InterruptedException {
+  public <T, R extends X> R tryTo(Function<T, R> f, T par) throws InterruptedException {
     Throwable lastException = null;
     for (int i = 0; i < n; i++) {
       try {
