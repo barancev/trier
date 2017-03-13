@@ -16,6 +16,7 @@
  */
 package ru.stqa.trier;
 
+import java.util.Collection;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Predicate;
@@ -72,7 +73,28 @@ public abstract class Trier<X> {
   }
 
   final protected <T> boolean isResultIgnored(X result) {
-    return ignoredResult != null && ignoredResult.test(result);
+    if (ignoredResult != null) {
+      return ignoredResult.test(result);
+
+    } else {
+      // by default ignore null object values, false boolean values, zero numbers, empty strings and empty collections
+      if (result == null) {
+        return true;
+      }
+      if (result instanceof Number && ((Number) result).doubleValue() == 0.0) {
+        return true;
+      }
+      if (result.equals(false)) {
+        return true;
+      }
+      if (result.equals("")) {
+        return true;
+      }
+      if (result instanceof Collection && ((Collection) result).isEmpty()) {
+        return true;
+      }
+      return false;
+    }
   }
 
 }

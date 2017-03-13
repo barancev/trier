@@ -23,6 +23,7 @@ import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
+import java.util.ArrayList;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
@@ -33,7 +34,6 @@ import static org.hamcrest.CoreMatchers.nullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.when;
-import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.doThrow;
@@ -134,7 +134,7 @@ class TrierTest {
   class TryToRunSupplier {
 
     @Mock
-    Supplier<String> run;
+    Supplier<Object> run;
 
     @BeforeEach
     void initMocks() {
@@ -155,6 +155,22 @@ class TrierTest {
       assertThat(trier.tryTo(run), is("OK"));
       verify(run, times(3)).get();
       assertThat(clock.now(), is(2L));
+    }
+
+    @Test
+    void shouldIgnoreNullFalseEmptyStringAndEmptyCollectionByDefault() throws InterruptedException {
+      when(run.get()).thenReturn(null).thenReturn("").thenReturn(false).thenReturn(new ArrayList<String>()).thenReturn("OK");
+      assertThat(trier.tryTo(run), is("OK"));
+      verify(run, times(5)).get();
+      assertThat(clock.now(), is(4L));
+    }
+
+    @Test
+    void shouldIgnoreZeroesByDefault() throws InterruptedException {
+      when(run.get()).thenReturn(0).thenReturn(0L).thenReturn(0.0).thenReturn("OK");
+      assertThat(trier.tryTo(run), is("OK"));
+      verify(run, times(4)).get();
+      assertThat(clock.now(), is(3L));
     }
 
     @Test
@@ -335,7 +351,7 @@ class TrierTest {
   class TryToRunFunction {
 
     @Mock
-    Function<String, String> run;
+    Function<String, Object> run;
 
     @BeforeEach
     void initMocks() {
@@ -356,6 +372,22 @@ class TrierTest {
       assertThat(trier.tryTo(run, "IN"), is("OK"));
       verify(run, times(3)).apply("IN");
       assertThat(clock.now(), is(2L));
+    }
+
+    @Test
+    void shouldIgnoreNullFalseEmptyStringAndEmptyCollectionByDefault() throws InterruptedException {
+      when(run.apply("IN")).thenReturn(null).thenReturn("").thenReturn(false).thenReturn(new ArrayList<String>()).thenReturn("OK");
+      assertThat(trier.tryTo(run, "IN"), is("OK"));
+      verify(run, times(5)).apply("IN");
+      assertThat(clock.now(), is(4L));
+    }
+
+    @Test
+    void shouldIgnoreZeroesByDefault() throws InterruptedException {
+      when(run.apply("IN")).thenReturn(0).thenReturn(0L).thenReturn(0.0).thenReturn("OK");
+      assertThat(trier.tryTo(run, "IN"), is("OK"));
+      verify(run, times(4)).apply("IN");
+      assertThat(clock.now(), is(3L));
     }
 
     @Test
