@@ -17,30 +17,17 @@
 package ru.stqa.trier;
 
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
 
-import java.util.function.Consumer;
-import java.util.function.Function;
-import java.util.function.Supplier;
-
-import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.Mockito.*;
 
 class BasicTrierTest {
 
-  private TestingClock clock;
   private Trier trier;
 
   @BeforeEach
   void init() {
-    clock = new TestingClock();
-    trier = new CounterBasedTrier(5, clock, 1L);
+    trier = new CounterBasedTrier(5, new TestingClock(), 1L);
   }
 
   @Test
