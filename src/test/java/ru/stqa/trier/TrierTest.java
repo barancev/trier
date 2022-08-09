@@ -27,15 +27,16 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
+import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.nullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.when;
 
 class TrierTest {
 
@@ -126,6 +127,14 @@ class TrierTest {
         () -> trier.ignoring(NumberFormatException.class).tryTo(run));
       verify(run, times(2)).run();
       assertThat(clock.now(), is(1L));
+    }
+
+    @Test
+    void shouldPrintTimeoutInHumanReadableFormat() {
+      doThrow(ArrayIndexOutOfBoundsException.class).doThrow(NumberFormatException.class).when(run).run();
+      Throwable thrown = assertThrows(LimitExceededException.class,
+        () -> trier.ignoring(NumberFormatException.class, ArrayIndexOutOfBoundsException.class).tryTo(run));
+      assertThat(thrown.getMessage(), equalTo("Timed out after 01:00:00.004 trying to perform action run"));
     }
   }
 
@@ -274,6 +283,14 @@ class TrierTest {
       verify(run, times(5)).get();
       assertThat(clock.now(), is(4L));
     }
+
+    @Test
+    void shouldPrintTimeoutInHumanReadableFormat() {
+      when(run.get()).thenThrow(NumberFormatException.class);
+      Throwable thrown = assertThrows(LimitExceededException.class,
+        () -> trier.ignoring(NumberFormatException.class).tryTo(run));
+      assertThat(thrown.getMessage(), equalTo("Timed out after 01:00:00.004 trying to perform action run"));
+    }
   }
 
   @Nested
@@ -343,6 +360,14 @@ class TrierTest {
         () -> trier.ignoring(NumberFormatException.class).tryTo(run, "IN"));
       verify(run, times(2)).accept("IN");
       assertThat(clock.now(), is(1L));
+    }
+
+    @Test
+    void shouldReturnTimeoutMessageInHumanReadableFormat() {
+      doThrow(NumberFormatException.class).when(run).accept("IN");
+      Throwable thrown = assertThrows(LimitExceededException.class,
+        () -> trier.ignoring(NumberFormatException.class).tryTo(run, "IN"));
+      assertThat(thrown.getMessage(), equalTo("Timed out after 01:00:00.004 trying to perform action run"));
     }
   }
 
@@ -491,6 +516,13 @@ class TrierTest {
       verify(run, times(5)).apply("IN");
       assertThat(clock.now(), is(4L));
     }
-  }
 
+    @Test
+    void shouldReturnTimeoutMessageInHumanReadableFormat() {
+      when(run.apply("IN")).thenThrow(NumberFormatException.class);
+      Throwable thrown = assertThrows(LimitExceededException.class,
+        () -> trier.ignoring(NumberFormatException.class).tryTo(run, "IN"));
+      assertThat(thrown.getMessage(), equalTo("Timed out after 01:00:00.004 trying to perform action run"));
+    }
+  }
 }

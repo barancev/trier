@@ -65,8 +65,9 @@ public class TimeBasedTrier<X> extends Trier<X> {
       }
 
       if (clock.past(end)) {
+        String humanReadableTimeout = String.format("%1$tH:%1$tM:%1$tS.%1$tL", duration);
         String timeoutMessage = String.format(
-          "Timed out after %d milliseconds trying to perform action %s", duration, r);
+          "Timed out after %s trying to perform action %s", humanReadableTimeout, r);
         throw new LimitExceededException(timeoutMessage, lastException);
       }
 
@@ -92,8 +93,9 @@ public class TimeBasedTrier<X> extends Trier<X> {
       }
 
       if (clock.past(end)) {
+        String humanReadableTimeout = String.format("%1$tH:%1$tM:%1$tS.%1$tL", duration);
         String timeoutMessage = String.format(
-          "Timed out after %d milliseconds trying to perform action %s", duration, s);
+          "Timed out after %s trying to perform action %s", humanReadableTimeout, s);
         throw new LimitExceededException(timeoutMessage, lastException);
       }
 
@@ -117,8 +119,9 @@ public class TimeBasedTrier<X> extends Trier<X> {
       }
 
       if (clock.past(end)) {
+        String humanReadableTimeout = String.format("%1$tH:%1$tM:%1$tS.%1$tL", duration);
         String timeoutMessage = String.format(
-          "Timed out after %d milliseconds trying to perform action %s", duration, c);
+          "Timed out after %s trying to perform action %s", humanReadableTimeout, c);
         throw new LimitExceededException(timeoutMessage, lastException);
       }
 
@@ -144,8 +147,9 @@ public class TimeBasedTrier<X> extends Trier<X> {
       }
 
       if (clock.past(end)) {
+        String humanReadableTimeout = String.format("%1$tH:%1$tM:%1$tS.%1$tL", duration);
         String timeoutMessage = String.format(
-          "Timed out after %d milliseconds trying to perform action %s", duration, f);
+          "Timed out after %s trying to perform action %s", humanReadableTimeout, f);
         throw new LimitExceededException(timeoutMessage, lastException);
       }
 
